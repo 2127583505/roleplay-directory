@@ -1,0 +1,454 @@
+---
+import Base from '../layouts/Base.astro';
+import { href } from '../consts';
+---
+
+<Base
+  title="怎么让他和你聊天"
+  description="把角色带进豆包、DeepSeek、Kimi：不需要任何技术，复制粘贴就行。"
+>
+  <article class="wrap wrap--narrow doc">
+    <header class="doc__head">
+      <h1 class="doc__title">怎么让他和你聊天</h1>
+      <p class="doc__lede">
+        不用装软件，不用懂技术。你平时用什么 AI，就用什么 ——
+        把角色的那段话粘进去，他就会以那个身份开始说话。
+      </p>
+    </header>
+
+    <nav class="toc" aria-label="目录">
+      <a href="#doubao">豆包：创建智能体</a>
+      <a href="#deepseek">DeepSeek：直接粘贴</a>
+      <a href="#others">Kimi / 元宝 / 智谱清言</a>
+      <a href="#grow">怎么让他越来越像</a>
+      <a href="#faq">常见问题</a>
+    </nav>
+
+    <!-- ——— 豆包 ——— -->
+    <section class="block" id="doubao">
+      <div class="wayhead">
+        <span class="wayhead__tag">推荐</span>
+        <h2 class="wayhead__title">豆包：创建智能体</h2>
+      </div>
+      <p class="block__text">
+        设定保存在智能体里，<strong>每次打开都不用重新粘贴</strong>，聊到哪了也在。
+        如果你常用豆包，这是最好的方式。
+      </p>
+      <ol class="steps">
+        <li>
+          <p class="steps__t">打开豆包，找到「创建智能体」</p>
+          <p class="steps__d">
+            首页或「AI 智能体」标签里。不同版本入口位置略有差别，
+            找不到就搜「创建智能体」。
+          </p>
+        </li>
+        <li>
+          <p class="steps__t">名字填角色名</p>
+          <p class="steps__d">比如「沈砚」。</p>
+        </li>
+        <li>
+          <p class="steps__t">把提示词粘进「设定」那一栏</p>
+          <p class="steps__d">
+            在角色页面点「复制提示词」，回来整段粘贴进设定框。
+          </p>
+        </li>
+        <li>
+          <p class="steps__t">保存，开聊</p>
+          <p class="steps__d">以后从「我的智能体」里随时找他。</p>
+        </li>
+      </ol>
+      <a class="btn btn--ghost" href={href('/')}>先去挑一个角色</a>
+    </section>
+
+    <!-- ——— DeepSeek ——— -->
+    <section class="block" id="deepseek">
+      <div class="wayhead">
+        <span class="wayhead__tag">最省事</span>
+        <h2 class="wayhead__title">DeepSeek：直接粘贴</h2>
+      </div>
+      <ol class="steps">
+        <li>
+          <p class="steps__t">开一个新对话</p>
+          <p class="steps__d">App 或网页都行。</p>
+        </li>
+        <li>
+          <p class="steps__t">第一条消息粘贴提示词，发送</p>
+          <p class="steps__d">
+            在角色页面点「复制提示词」，粘进去发出去。
+            他会以角色身份说第一句话。
+          </p>
+        </li>
+        <li>
+          <p class="steps__t">正常聊就行</p>
+          <p class="steps__d">
+            想换话题、想推进剧情、想沉默都可以 —— 他会接。
+          </p>
+        </li>
+      </ol>
+      <div class="callout">
+        <p class="callout__t">两个小技巧</p>
+        <p>开新对话要重新粘贴一次提示词。</p>
+        <p>
+          聊天时把「深度思考」<strong>关掉</strong>，他会更像在聊天，
+          不那么像在写文章。
+        </p>
+      </div>
+    </section>
+
+    <!-- ——— 其他 ——— -->
+    <section class="block" id="others">
+      <h2 class="block__title">Kimi / 元宝 / 智谱清言</h2>
+      <p class="block__text">
+        这几个都有智能体功能，操作和豆包差不多：
+        找到「创建智能体 / 创建角色」，把提示词粘进设定里就行。
+      </p>
+      <p class="block__text">
+        如果不想建智能体，也可以用 DeepSeek 那个办法 —— 新对话里直接粘贴。
+      </p>
+    </section>
+
+    <!-- ——— 丰富设定 ——— -->
+    <section class="block" id="grow">
+      <h2 class="block__title">怎么让他越来越像你心里那个他</h2>
+      <p class="block__text">
+        角色不是定稿，是养出来的。三种方式，按可靠程度排：
+      </p>
+
+      <div class="grow">
+        <div class="grow__card">
+          <p class="grow__rank">最可靠</p>
+          <p class="grow__t">改人设，重新粘贴</p>
+          <p class="grow__d">
+            聊出了新东西 —— 他的过去、你们的关系、某个小习惯 ——
+            直接把它写进那段提示词里。下次粘贴的就是升级版。
+          </p>
+        </div>
+        <div class="grow__card">
+          <p class="grow__rank">最快</p>
+          <p class="grow__t">聊天里直接补</p>
+          <p class="grow__d">
+            说「（补充设定：你左手有一道旧疤，你从不解释它）」，
+            或者「记住，我是三年前你送走的那个学生」。现在的模型基本都能接住并延续。
+          </p>
+        </div>
+        <div class="grow__card">
+          <p class="grow__rank">最省心</p>
+          <p class="grow__t">用 App 的记忆</p>
+          <p class="grow__d">
+            豆包和 Kimi 都有记忆功能，会自动记住重要的事。
+            缺点是你控制不了它记什么、忘什么。
+          </p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p class="callout__t">一条最重要的经验</p>
+        <p>
+          <strong>写进人设的</strong>：不变的东西 —— 他的性格、过去、说话方式、
+          做不到的事。
+        </p>
+        <p>
+          <strong>留在对话里的</strong>：会变的东西 —— 你们的关系到哪了、
+          你说过什么、你们一起经历过什么。
+        </p>
+        <p>
+          把会变的也塞进人设，改起来会越来越麻烦。
+        </p>
+      </div>
+    </section>
+
+    <!-- ——— FAQ ——— -->
+    <section class="block" id="faq">
+      <h2 class="block__title">常见问题</h2>
+
+      <details class="qa">
+        <summary>聊着聊着他忘了自己是谁</summary>
+        <p class="qa__a">
+          长对话会把设定冲淡。两个办法：把提示词整段再发一次；
+          或者只说一句「（回到你的角色）」，通常就能拉回来。
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary>他开始长篇大论，一次写一大段</summary>
+        <p class="qa__a">
+          直接说「一次只说一两句」。在 DeepSeek 里也可以把「深度思考」关掉，
+          会自然很多。
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary>他出戏了，说自己是 AI</summary>
+        <p class="qa__a">
+          提示词的规则里已经写了不许出戏，但偶尔还是会破。
+          把【规则】那一段再发一遍，一般就回来了。
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary>想从头再来一次</summary>
+        <p class="qa__a">
+          开一个新对话，重新粘贴提示词。如果你用的是智能体，
+          直接开新会话就行，不用重新粘。
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary>他说的话不像他</summary>
+        <p class="qa__a">
+          多半是「他做不到的事」这一段没被遵守。直接指出来：
+          「你不会这样说话」。模型纠错很快。
+          屡次不行的话，说明这段设定要写得更具体。
+        </p>
+      </details>
+    </section>
+
+    <footer class="doc__foot">
+      <p>挑一个角色，现在就试试。</p>
+      <a class="btn btn--primary" href={href('/')}>去挑一个</a>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .doc {
+    padding-top: 44px;
+  }
+
+  .doc__head {
+    padding-bottom: 26px;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .doc__title {
+    font-size: clamp(26px, 4.4vw, 38px);
+    line-height: 1.3;
+  }
+
+  .doc__lede {
+    margin-top: 16px;
+    font-size: 15.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 46ch;
+  }
+
+  /* —— 目录 —— */
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--hairline);
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  .toc a:hover {
+    color: var(--accent);
+  }
+
+  /* —— 区块 —— */
+  .block {
+    margin-top: 44px;
+    scroll-margin-top: 84px;
+  }
+
+  .block__title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .block__text {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    max-width: 50ch;
+  }
+
+  .block__text + .block__text {
+    margin-top: 13px;
+  }
+
+  .block__text strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* —— 方式标题 —— */
+  .wayhead {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .wayhead__tag {
+    flex-shrink: 0;
+    padding: 4px 11px;
+    border-radius: var(--r-pill);
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    font-size: 11.5px;
+    letter-spacing: 0.05em;
+  }
+
+  .wayhead__title {
+    font-size: 20px;
+  }
+
+  /* —— 步骤 —— */
+  .steps {
+    margin: 16px 0 20px;
+    padding-left: 1.3em;
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 50ch;
+  }
+
+  .steps li + li {
+    margin-top: 16px;
+  }
+
+  .steps__t {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .steps__d {
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+
+  /* —— 提示块 —— */
+  .callout {
+    margin-top: 22px;
+    padding: 20px 22px;
+    background: var(--surface-sunk);
+    border-radius: var(--r-md);
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  .callout__t {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  .callout p + p {
+    margin-top: 10px;
+  }
+
+  .callout strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* —— 三种养法 —— */
+  .grow {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  @media (min-width: 640px) {
+    .grow {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .grow__card {
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+  }
+
+  .grow__rank {
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 9px;
+  }
+
+  .grow__t {
+    font-family: var(--font-display);
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .grow__d {
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: var(--ink-muted);
+  }
+
+  /* —— FAQ —— */
+  .qa {
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .qa:first-of-type {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .qa summary {
+    padding: 16px 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    padding-right: 28px;
+  }
+
+  .qa summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .qa summary::after {
+    content: '+';
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--ink-faint);
+    transition: transform 0.2s ease;
+  }
+
+  .qa[open] summary::after {
+    content: '−';
+  }
+
+  .qa__a {
+    margin: 0;
+    padding: 0 0 18px;
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: var(--ink-muted);
+    max-width: 50ch;
+  }
+
+  /* —— 页脚 —— */
+  .doc__foot {
+    margin-top: 52px;
+    padding-top: 28px;
+    border-top: 1px solid var(--hairline);
+    font-size: 14.5px;
+    color: var(--ink-soft);
+  }
+
+  .doc__foot .btn {
+    margin-top: 16px;
+  }
+</style>

@@ -1,9 +1,12 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 import Base from '../../layouts/Base.astro';
 import Cover from '../../components/Cover.astro';
 import CharacterCard from '../../components/CharacterCard.astro';
 import { SITE, SOURCE_LABELS, SPEC_LABELS, href, absUrl } from '../../consts';
+import { buildRoleplayPrompt } from '../../lib/prompt';
 
 export async function getStaticPaths() {
   const entries = await getCollection('characters');
@@ -21,6 +24,25 @@ const { Content } = await render(entry);
 const badgeImg = absUrl(`/badge/${entry.id}.svg`);
 const badgeLink = absUrl(`/c/${entry.id}/`);
 const badgeMd = `[![灯下收录](${badgeImg})](${badgeLink})`;
+
+/**
+ * 如果这个角色在本站有卡片文件（seed-cards/），就生成一段
+ * 可以直接粘贴进豆包 / DeepSeek 的提示词。
+ *
+ * 这是大多数用户真正需要的东西：她们不用 SillyTavern，
+ * 用的是普通对话 App —— 对她们来说 PNG 卡文件没用，
+ * 有用的是一段能直接粘贴的人设文字。
+ */
+let cardPrompt: string | null = null;
+try {
+  const raw = await readFile(
+    path.join(process.cwd(), 'seed-cards', `${entry.id}.json`),
+    'utf-8',
+  );
+  cardPrompt = buildRoleplayPrompt(JSON.parse(raw));
+} catch {
+  // 这个角色的卡片不在本站（外链模式），不提供提示词
+}
 
 const fmt = (d?: Date) =>
   d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : null;
@@ -166,6 +188,28 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
           )
         }
 
+        {
+          cardPrompt && (
+            <section class="block" id="chat">
+              <h2 class="block__title">在豆包 / DeepSeek 里和他聊天</h2>
+              <p class="block__text">
+                不用装任何软件，也不用下载文件。复制下面这段话，粘到豆包或
+                DeepSeek 的新对话里发出去，他就会以这个身份开始和你说话。
+              </p>
+              <div class="promptbox">
+                <button class="btn btn--primary" type="button" data-prompt-copy>
+                  复制提示词
+                </button>
+                <a class="btn btn--ghost" href={href('/use/')}>具体怎么操作</a>
+              </div>
+              <details class="promptdetails">
+                <summary>看看这段话里写了什么</summary>
+                <pre class="promptdetails__pre"><code data-prompt-text>{cardPrompt}</code></pre>
+              </details>
+            </section>
+          )
+        }
+
         <!-- 获取与导入 -->
         <section class="block get" id="get">
           <h2 class="block__title">怎么开始</h2>
@@ -284,6 +328,31 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
       const range = document.createRange();
       if (badgeMd) {
         range.selectNodeContents(badgeMd);
+        const sel = getSelection();
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+      }
+    }
+  });
+
+  // 复制角色提示词 —— 这是把角色带进豆包 / DeepSeek 的那一步
+  const promptBtn = document.querySelector<HTMLButtonElement>('[data-prompt-copy]');
+  const promptText = document.querySelector<HTMLElement>('[data-prompt-text]');
+
+  promptBtn?.addEventListener('click', async () => {
+    const text = promptText?.textContent ?? '';
+    try {
+      await navigator.clipboard.writeText(text);
+      const old = promptBtn.textContent;
+      promptBtn.textContent = '已复制，去粘贴吧';
+      setTimeout(() => (promptBtn.textContent = old), 2200);
+    } catch {
+      // 剪贴板不可用时，展开内容让用户手动复制
+      const details = promptText?.closest('details');
+      if (details) details.open = true;
+      if (promptText) {
+        const range = document.createRange();
+        range.selectNodeContents(promptText);
         const sel = getSelection();
         sel?.removeAllRanges();
         sel?.addRange(range);
@@ -604,5 +673,46 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
     color: var(--ink-soft);
     white-space: pre-wrap;
     word-break: break-all;
+  }
+
+  /* —— 提示词复制 —— */
+  .promptbox {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .promptdetails {
+    margin-top: 16px;
+  }
+
+  .promptdetails summary {
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    cursor: pointer;
+    padding: 6px 0;
+  }
+
+  .promptdetails summary:hover {
+    color: var(--accent);
+  }
+
+  .promptdetails__pre {
+    margin: 10px 0 0;
+    padding: 16px 18px;
+    background: var(--surface-sunk);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+    overflow: auto;
+    max-height: 420px;
+  }
+
+  .promptdetails__pre code {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 </style>

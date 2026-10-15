@@ -1,0 +1,282 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, href } from '../consts';
+---
+
+<Base title="提交角色卡" description="如何把你的角色卡提交到灯下目录。">
+  <article class="wrap wrap--narrow doc">
+    <header class="doc__head">
+      <h1 class="doc__title">提交角色卡</h1>
+      <p class="doc__lede">
+        这个目录由创作者共建。提交方式就是给仓库提一个 Pull Request ——
+        没有注册、没有后台、没有审核费。
+      </p>
+    </header>
+
+    <section class="ways">
+      <a class="way" href={href('/import/')}>
+        <p class="way__tag">推荐</p>
+        <h2 class="way__title">用导入工具</h2>
+        <p class="way__text">
+          把已经做好的 PNG 或 JSON 角色卡拖进页面，自动读出元数据，补全后一键生成条目文件。
+        </p>
+      </a>
+      <a class="way" href={href('/spec/')}>
+        <p class="way__tag">手动</p>
+        <h2 class="way__title">按规范手写</h2>
+        <p class="way__text">
+          在 <code>src/content/characters/</code> 新建一个 <code>.md</code> 文件，
+          按字段规范填写。适合一次提交多张卡。
+        </p>
+      </a>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title">三步走</h2>
+      <ol class="steps">
+        <li>
+          <p class="steps__t">Fork 仓库</p>
+          <p class="steps__d">
+            打开 <a href={SITE.repo} rel="noopener">{SITE.repo.replace('https://', '')}</a>
+            ，点右上角 Fork。
+          </p>
+        </li>
+        <li>
+          <p class="steps__t">添加条目文件</p>
+          <p class="steps__d">
+            把生成好的 <code>你的文件名.md</code> 放进
+            <code>src/content/characters/</code>。文件名会成为网址，用小写字母和连字符。
+          </p>
+        </li>
+        <li>
+          <p class="steps__t">提 Pull Request</p>
+          <p class="steps__d">
+            提交后 CI 会自动校验字段格式。通过后再由社区 review 合并，合并即上线。
+          </p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title">会被合并的</h2>
+      <ul class="list list--ok">
+        <li>角色卡本体有稳定、可公开访问的地址</li>
+        <li>有明确的一句话说清「这个人是谁、故事从哪开始」</li>
+        <li>简介是你自己写的，不是复制粘贴角色卡原文</li>
+        <li>署名和授权填写正确，改编作品标注了来源</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title">会被拒绝的</h2>
+      <ul class="list list--no">
+        <li>角色卡本体无法下载，或者链接需要登录、限时有效</li>
+        <li>封面使用真人照片，或使用他人的肖像</li>
+        <li>直接复制他人的角色卡、简介或封面而不注明来源</li>
+        <li>条目内容与角色卡无关，或明显是广告</li>
+        <li>涉及真实存在的可识别个人，或未成年人相关的性化内容</li>
+      </ul>
+      <p class="block__note">
+        这个名单会随着社区共识调整。有异议的条目可以直接在 PR 里讨论。
+      </p>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title">关于授权</h2>
+      <p class="block__text">
+        角色卡内容的著作权归创作者本人。本站只索引元数据（名字、标签、简介、外链），
+        不复制也不分发角色卡文件。
+      </p>
+      <p class="block__text">
+        条目里的 <code>license</code> 字段由你自己选，常见选择是
+        <code>CC-BY-NC-SA-4.0</code>（署名-非商用-相同方式共享）或
+        <code>CC-BY-4.0</code>（仅需署名）。也可以填「保留所有权利」。
+      </p>
+      <p class="block__text">
+        站点本身的开源代码以 MIT 授权发布。
+      </p>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title">需要帮忙？</h2>
+      <p class="block__text">
+        不熟悉 Git 也没关系。在仓库开一个 Issue 把你的信息贴出来，会有人帮你转成条目文件。
+      </p>
+      <p class="block__text">
+        <a class="btn btn--ghost" href={`${SITE.repo}/issues/new`} rel="noopener">
+          在仓库开 Issue
+        </a>
+      </p>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .doc {
+    padding-top: 44px;
+  }
+
+  .doc__head {
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .doc__title {
+    font-size: clamp(26px, 4.4vw, 38px);
+    line-height: 1.3;
+  }
+
+  .doc__lede {
+    margin-top: 16px;
+    font-size: 15.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  /* —— 两个入口 —— */
+  .ways {
+    display: grid;
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  @media (min-width: 620px) {
+    .ways {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .way {
+    display: block;
+    padding: 22px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    transition: border-color 0.18s ease, transform 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+
+  .way:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .way__tag {
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .way__title {
+    font-size: 17px;
+  }
+
+  .way__text {
+    margin-top: 9px;
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--ink-muted);
+  }
+
+  /* —— 区块 —— */
+  .block {
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .block__title {
+    font-size: 17px;
+    margin-bottom: 16px;
+  }
+
+  .block__text {
+    font-size: 14.5px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+  }
+
+  .block__text + .block__text {
+    margin-top: 13px;
+  }
+
+  .block__note {
+    margin-top: 14px;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    line-height: 1.75;
+  }
+
+  .block code,
+  .way code,
+  .steps code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    background: var(--surface-sunk);
+    padding: 2px 6px;
+    border-radius: 5px;
+  }
+
+  /* —— 步骤 —— */
+  .steps {
+    margin: 0;
+    padding-left: 1.3em;
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+
+  .steps li + li {
+    margin-top: 16px;
+  }
+
+  .steps__t {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .steps__d {
+    margin-top: 4px;
+  }
+
+  .steps__d a {
+    color: var(--accent);
+    word-break: break-all;
+  }
+
+  /* —— 清单 —— */
+  .list {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+
+  .list li {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 9px;
+  }
+
+  .list li::before {
+    position: absolute;
+    left: 2px;
+    top: 0;
+    font-size: 13px;
+  }
+
+  .list--ok li::before {
+    content: '✓';
+    color: color-mix(in srgb, var(--accent) 70%, #2f7d4f);
+  }
+
+  .list--no li::before {
+    content: '✕';
+    color: var(--ink-faint);
+  }
+</style>

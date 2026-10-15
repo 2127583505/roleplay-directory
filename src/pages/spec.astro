@@ -1,0 +1,562 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, href } from '../consts';
+
+type Field = {
+  name: string;
+  type: string;
+  req: boolean;
+  desc: string;
+};
+
+const groups: { title: string; note?: string; fields: Field[] }[] = [
+  {
+    title: '身份',
+    fields: [
+      { name: 'name', type: '文本', req: true, desc: '角色名。会显示在卡片和标题上。' },
+      {
+        name: 'tagline',
+        type: '文本',
+        req: true,
+        desc: '一句话钩子。决定点击率，写法见创作指南。',
+      },
+    ],
+  },
+  {
+    title: '归属',
+    note: '这一组决定署名和授权，请务必填准。',
+    fields: [
+      { name: 'creator', type: '文本', req: true, desc: '创作者署名。会生成创作者主页。' },
+      { name: 'creatorUrl', type: '网址', req: false, desc: '创作者主页或社交账号。' },
+      {
+        name: 'license',
+        type: '文本',
+        req: false,
+        desc: '内容授权，默认 CC-BY-NC-SA-4.0。也可以写「保留所有权利」。',
+      },
+    ],
+  },
+  {
+    title: '分类',
+    fields: [
+      { name: 'tags', type: '文本数组', req: false, desc: '题材与口味标签。建议 3–5 个。' },
+      { name: 'fandom', type: '文本', req: false, desc: '原作名。原创角色留空。' },
+      { name: 'language', type: '文本', req: false, desc: '语言，默认 zh。' },
+    ],
+  },
+  {
+    title: '版本',
+    fields: [
+      { name: 'version', type: '文本', req: false, desc: '版本号，默认 1.0.0。' },
+      { name: 'created', type: '日期', req: false, desc: '创建日期，形如 2026-10-01。' },
+      { name: 'updated', type: '日期', req: false, desc: '最近更新日期。影响默认排序。' },
+    ],
+  },
+  {
+    title: '封面',
+    note: '不填也能用 —— 会自动生成一张抽象封面。',
+    fields: [
+      {
+        name: 'cover',
+        type: '网址',
+        req: false,
+        desc: '外链封面图，建议 4:5 竖版。禁止真人照片。',
+      },
+      { name: 'coverAlt', type: '文本', req: false, desc: '封面的无障碍描述。' },
+      {
+        name: 'coverStyle',
+        type: '文本',
+        req: false,
+        desc: '抽象封面配色，取值：rose / peach / lavender / sage / sky / mauve / sand / clay。留空则自动。',
+      },
+    ],
+  },
+  {
+    title: '来源',
+    note: '整个站的核心。本站不保存角色卡文件，只指向这些地址。',
+    fields: [
+      {
+        name: 'source[]',
+        type: '对象数组',
+        req: true,
+        desc: '至少一条。每条含 type、url，可选 label 与 checksum。',
+      },
+      {
+        name: 'source[].type',
+        type: '枚举',
+        req: true,
+        desc: 'png / json / repo / ipfs / url。',
+      },
+      { name: 'source[].url', type: '网址', req: true, desc: '角色卡本体的公开可访问地址。' },
+      { name: 'source[].label', type: '文本', req: false, desc: '展示名，例如「SillyTavern PNG 卡」。' },
+      {
+        name: 'source[].checksum',
+        type: '文本',
+        req: false,
+        desc: '可选校验和，例如 sha256:…，防止链接目标被替换。',
+      },
+    ],
+  },
+  {
+    title: '规范兼容',
+    fields: [
+      {
+        name: 'spec',
+        type: '枚举',
+        req: false,
+        desc: 'character-card-v2 / character-card-v3 / other。默认 v3。',
+      },
+      {
+        name: 'greetingPreview',
+        type: '文本',
+        req: false,
+        desc: '开场白节选，一两句。完整开场白留在卡片文件里。',
+      },
+    ],
+  },
+  {
+    title: '社区机制',
+    fields: [
+      {
+        name: 'requires',
+        type: '文本数组',
+        req: false,
+        desc: '使用前需要搭配的世界书、音色包或脚本。',
+      },
+      {
+        name: 'derivedFrom',
+        type: '文本数组',
+        req: false,
+        desc: '改编自哪些角色（填对方的文件名）。会生成创作谱系。',
+      },
+      { name: 'featured', type: '布尔', req: false, desc: '首页精选。由维护者设置。' },
+    ],
+  },
+];
+
+const example = `---
+name: 沈砚
+tagline: 他权倾朝野，却只在你面前承认自己会怕
+creator: 示例创作者
+creatorUrl: https://github.com/2127583505
+license: CC-BY-NC-SA-4.0
+tags:
+  - 古风
+  - 权谋
+  - 慢热
+version: 1.2.0
+created: 2026-08-14
+updated: 2026-10-02
+coverStyle: rose
+source:
+  - type: png
+    url: https://github.com/2127583505/character-cards
+    label: SillyTavern PNG 卡
+spec: character-card-v3
+greetingPreview: 他把茶盏搁在案角，声音很轻：「阿沅，你今夜若要走，我不拦。」
+requires:
+  - 昭京朝堂·世界书（v2）
+featured: true
+---
+
+## 关于他
+
+昭京最年轻的执笔大臣，二十岁入阁。
+
+## 为什么推荐
+
+写给喜欢长线博弈的人。
+
+## 使用建议
+
+- 推荐搭配世界书。
+- 从「一个需要他帮忙的麻烦」开场。`;
+---
+
+<Base title="数据规范" description="灯下目录的角色卡条目字段规范，兼容 Character Card V2/V3。">
+  <article class="wrap wrap--narrow doc">
+    <header class="doc__head">
+      <h1 class="doc__title">数据规范</h1>
+      <p class="doc__lede">
+        每个角色对应 <code>src/content/characters/</code> 下的一个
+        <code>.md</code> 文件。文件名就是网址，用小写字母、数字和连字符。
+      </p>
+    </header>
+
+    <section class="block">
+      <h2 class="block__title">先说最重要的一条</h2>
+      <div class="callout">
+        <p>
+          <strong>本站不保存、不分发角色卡文件。</strong>
+          条目里只有元数据和一个指向你仓库的地址。
+        </p>
+        <p>
+          所以 <code>source</code> 是必填的 —— 没有它，这个条目就没有意义。
+          它也是本站能保持免费和不承担内容分发责任的原因。
+        </p>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title">字段表</h2>
+      {
+        groups.map((g) => (
+          <div class="fgroup">
+            <h3 class="fgroup__title">{g.title}</h3>
+            {g.note && <p class="fgroup__note">{g.note}</p>}
+            <div class="ftable">
+              {g.fields.map((f) => (
+                <div class="frow">
+                  <div class="frow__head">
+                    <code class="frow__name">{f.name}</code>
+                    {f.req ? (
+                      <span class="frow__req">必填</span>
+                    ) : (
+                      <span class="frow__opt">选填</span>
+                    )}
+                    <span class="frow__type">{f.type}</span>
+                  </div>
+                  <p class="frow__desc">{f.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="block">
+      <h2 class="block__title">完整示例</h2>
+      <p class="block__text">
+        <code>---</code> 之间是字段，下面是正文。正文支持 Markdown，
+        建议写「关于他 / 为什么推荐 / 使用建议」三段。
+      </p>
+      <pre class="code"><code>{example}</code></pre>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title">正文部分</h2>
+      <p class="block__text">
+        正文是<strong>你为这个目录单独写的简介</strong>，
+        不是角色卡里的 <code>description</code> 字段。区别在于：
+      </p>
+      <ul class="list">
+        <li>角色卡的 description 是给模型看的，可以堆设定</li>
+        <li>这里的正文是给玩家看的，要让人决定「要不要点下载」</li>
+      </ul>
+      <p class="block__text">
+        不要直接复制粘贴角色卡原文。一方面它是写给模型的，读起来不像人话；
+        另一方面也容易和原作者的授权条款冲突。
+      </p>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title">封面要求</h2>
+      <ul class="list">
+        <li>比例 <strong>4:5 竖版</strong>，宽度建议 800px 以上</li>
+        <li>使用外链地址，不要把图片提交进仓库</li>
+        <li><strong>禁止真人照片</strong>，只接受插画、二维或风格化人像</li>
+        <li>不填也可以 —— 会自动按文件名生成一张抽象封面</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title">与 Character Card V2/V3 的关系</h2>
+      <p class="block__text">
+        条目里的角色卡本体应该是标准的 Character Card 格式，
+        这样任何兼容的客户端都能直接导入。
+      </p>
+      <div class="maptable">
+        <div class="maprow">
+          <code>name</code><span>←</span><code>name</code>
+        </div>
+        <div class="maprow">
+          <code>creator</code><span>←</span><code>creator</code>
+        </div>
+        <div class="maprow">
+          <code>version</code><span>←</span><code>character_version</code>
+        </div>
+        <div class="maprow">
+          <code>tags</code><span>←</span><code>tags</code>
+        </div>
+        <div class="maprow">
+          <code>greetingPreview</code><span>←</span><code>first_mes</code> 的节选
+        </div>
+      </div>
+      <p class="block__text">
+        用 <a href={href('/import/')}>导入工具</a> 可以自动完成这套映射 ——
+        它在你浏览器里读取 PNG 卡里的数据，不会上传任何文件。
+      </p>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title">校验</h2>
+      <p class="block__text">
+        每次提 PR，CI 会自动检查字段类型、必填项和网址格式。
+        本地也可以先跑一遍：
+      </p>
+      <pre class="code code--sm"><code>npm run dev    # 本地预览
+npm run build  # 构建（含字段校验）</code></pre>
+      <p class="block__text">
+        校验不通过时构建会失败，PR 页面会显示具体是哪个字段的问题。
+      </p>
+    </section>
+
+    <footer class="doc__foot">
+      <p>不用手写，直接生成条目文件更快。</p>
+      <a class="btn btn--primary" href={href('/import/')}>打开导入工具</a>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .doc {
+    padding-top: 44px;
+  }
+
+  .doc__head {
+    padding-bottom: 26px;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .doc__title {
+    font-size: clamp(26px, 4.4vw, 38px);
+    line-height: 1.3;
+  }
+
+  .doc__lede {
+    margin-top: 16px;
+    font-size: 15.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  .doc code,
+  .block__text code,
+  .list code,
+  .callout code,
+  .fgroup__note code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    background: var(--surface-sunk);
+    padding: 2px 6px;
+    border-radius: 5px;
+  }
+
+  .block {
+    margin-top: 44px;
+    scroll-margin-top: 84px;
+  }
+
+  .block__title {
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  .block__text {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    max-width: 58ch;
+  }
+
+  .block__text + .block__text,
+  .block__text + .code,
+  .block__text + .list,
+  .block__text + .maptable,
+  .list + .block__text,
+  .maptable + .block__text,
+  .code + .block__text {
+    margin-top: 16px;
+  }
+
+  .block__text strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .block__text a {
+    color: var(--accent);
+  }
+
+  /* —— 重点提示 —— */
+  .callout {
+    padding: 20px 22px;
+    background: var(--accent-soft);
+    border-radius: var(--r-md);
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+
+  .callout p + p {
+    margin-top: 12px;
+  }
+
+  .callout strong {
+    color: var(--accent-deep);
+    font-weight: 600;
+  }
+
+  /* —— 字段表 —— */
+  .fgroup {
+    margin-top: 26px;
+  }
+
+  .fgroup__title {
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .fgroup__note {
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .ftable {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .frow {
+    padding: 13px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .frow__head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .frow__name {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .frow__req,
+  .frow__opt {
+    font-size: 10.5px;
+    padding: 2px 7px;
+    border-radius: var(--r-pill);
+    letter-spacing: 0.05em;
+  }
+
+  .frow__req {
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+  }
+
+  .frow__opt {
+    background: var(--surface-sunk);
+    color: var(--ink-faint);
+  }
+
+  .frow__type {
+    font-size: 11.5px;
+    color: var(--ink-faint);
+  }
+
+  .frow__desc {
+    margin-top: 6px;
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--ink-muted);
+  }
+
+  /* —— 代码 —— */
+  .code {
+    margin: 0;
+    padding: 20px;
+    background: var(--surface-sunk);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+    overflow-x: auto;
+  }
+
+  .code code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+    background: none;
+    padding: 0;
+    white-space: pre;
+  }
+
+  .code--sm code {
+    font-size: 13px;
+  }
+
+  /* —— 映射表 —— */
+  .maptable {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+  }
+
+  .maprow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  .maprow span {
+    color: var(--ink-faint);
+  }
+
+  /* —— 列表 —— */
+  .list {
+    margin: 14px 0 0;
+    padding-left: 0;
+    list-style: none;
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 58ch;
+  }
+
+  .list li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+  }
+
+  .list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--ink-faint);
+  }
+
+  .list strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* —— 页脚 —— */
+  .doc__foot {
+    margin-top: 52px;
+    padding-top: 28px;
+    border-top: 1px solid var(--hairline);
+    font-size: 14.5px;
+    color: var(--ink-soft);
+  }
+
+  .doc__foot .btn {
+    margin-top: 16px;
+  }
+</style>

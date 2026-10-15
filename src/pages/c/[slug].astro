@@ -1,0 +1,526 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Cover from '../../components/Cover.astro';
+import CharacterCard from '../../components/CharacterCard.astro';
+import { SITE, SOURCE_LABELS, SPEC_LABELS, href } from '../../consts';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('characters');
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const c = entry.data;
+const { Content } = await render(entry);
+
+const fmt = (d?: Date) =>
+  d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : null;
+
+/** 同标签相关角色，用于继续发现 */
+const all = await getCollection('characters');
+const related = all
+  .filter((e) => e.id !== entry.id)
+  .map((e) => ({
+    entry: e,
+    score: e.data.tags.filter((t) => c.tags.includes(t)).length,
+  }))
+  .filter((x) => x.score > 0)
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 4);
+
+const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
+  `[纠错] ${c.name}`,
+)}&body=${encodeURIComponent(`角色卡页面：/c/${entry.id}/\n\n问题描述：\n`)}`;
+---
+
+<Base title={c.name} description={`${c.name} · ${c.tagline}`}>
+  <article class="wrap detail">
+    <nav class="crumb" aria-label="面包屑">
+      <a href={href('/')}>全部角色</a>
+      <span aria-hidden="true">/</span>
+      <span>{c.name}</span>
+    </nav>
+
+    <div class="detail__grid">
+      <!-- 左：封面 -->
+      <div class="detail__side">
+        <Cover
+          id={entry.id}
+          name={c.name}
+          cover={c.cover}
+          coverAlt={c.coverAlt}
+          coverStyle={c.coverStyle}
+          ratio="3 / 4"
+          loading="eager"
+        />
+
+        <a class="btn btn--primary detail__cta" href="#get">
+          获取这张角色卡
+        </a>
+
+        <dl class="facts">
+          <div class="facts__row">
+            <dt>创作者</dt>
+            <dd>
+              <a href={href(`/creator/${encodeURIComponent(c.creator)}/`)}>{c.creator}</a>
+            </dd>
+          </div>
+          <div class="facts__row">
+            <dt>版本</dt>
+            <dd>v{c.version}</dd>
+          </div>
+          {
+            c.updated && (
+              <div class="facts__row">
+                <dt>更新</dt>
+                <dd>{fmt(c.updated)}</dd>
+              </div>
+            )
+          }
+          <div class="facts__row">
+            <dt>规范</dt>
+            <dd>{SPEC_LABELS[c.spec] ?? c.spec}</dd>
+          </div>
+          <div class="facts__row">
+            <dt>授权</dt>
+            <dd>{c.license}</dd>
+          </div>
+          {
+            c.fandom && (
+              <div class="facts__row">
+                <dt>原作</dt>
+                <dd>{c.fandom}</dd>
+              </div>
+            )
+          }
+        </dl>
+      </div>
+
+      <!-- 右：正文 -->
+      <div class="detail__main">
+        <header class="detail__head">
+          <h1 class="detail__name">{c.name}</h1>
+          <p class="detail__tagline">{c.tagline}</p>
+          {
+            c.tags.length > 0 && (
+              <ul class="detail__tags">
+                {c.tags.map((t) => (
+                  <li class="pill">{t}</li>
+                ))}
+              </ul>
+            )
+          }
+        </header>
+
+        {
+          c.greetingPreview && (
+            <section class="opening">
+              <p class="opening__label">开场白</p>
+              <blockquote class="opening__quote">{c.greetingPreview}</blockquote>
+              <p class="opening__note">节选。完整开场白在角色卡文件里。</p>
+            </section>
+          )
+        }
+
+        <div class="prose">
+          <Content />
+        </div>
+
+        {
+          c.requires.length > 0 && (
+            <section class="block">
+              <h2 class="block__title">使用前需要准备</h2>
+              <ul class="list">
+                {c.requires.map((r) => (
+                  <li>{r}</li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          c.derivedFrom.length > 0 && (
+            <section class="block">
+              <h2 class="block__title">改编自</h2>
+              <ul class="list">
+                {c.derivedFrom.map((id) => (
+                  <li>
+                    <a href={href(`/c/${id}/`)}>{id}</a>
+                  </li>
+                ))}
+              </ul>
+              <p class="block__note">
+                这张卡在原作基础上做了改编。二创请一并遵守原作者的授权条款。
+              </p>
+            </section>
+          )
+        }
+
+        <!-- 获取与导入 -->
+        <section class="block get" id="get">
+          <h2 class="block__title">怎么开始</h2>
+
+          <ol class="steps">
+            <li class="steps__item">
+              <span class="steps__num">1</span>
+              <div>
+                <p class="steps__title">下载角色卡</p>
+                <ul class="sources">
+                  {
+                    c.source.map((s) => (
+                      <li class="sources__item">
+                        <a class="sources__link" href={s.url} rel="noopener nofollow">
+                          <span class="sources__label">{s.label ?? SOURCE_LABELS[s.type] ?? '下载'}</span>
+                          <span class="sources__type">{SOURCE_LABELS[s.type] ?? s.type}</span>
+                        </a>
+                        {s.checksum && <code class="sources__sum">{s.checksum}</code>}
+                      </li>
+                    ))
+                  }
+                </ul>
+                <p class="steps__note">
+                  文件在创作者自己的仓库里，本站不保存、不分发角色卡内容。
+                </p>
+              </div>
+            </li>
+
+            <li class="steps__item">
+              <span class="steps__num">2</span>
+              <div>
+                <p class="steps__title">在你的软件里导入</p>
+                <p class="steps__text">
+                  打开你常用的角色扮演客户端，找到「角色 / Characters」→「导入 /
+                  Import」，选择刚下载的 PNG 或 JSON 文件即可。
+                </p>
+              </div>
+            </li>
+
+            <li class="steps__item">
+              <span class="steps__num">3</span>
+              <div>
+                <p class="steps__title">开始对话</p>
+                <p class="steps__text">
+                  选择这个角色开一段新对话。开场白会自动出现在第一条消息里。
+                </p>
+                <p class="steps__note">
+                  提示词是「建议」而不是「规则」——按你喜欢的节奏来。
+                </p>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        {
+          related.length > 0 && (
+            <section class="block">
+              <h2 class="block__title">你可能也会喜欢</h2>
+              <div class="related">
+                {related.map(({ entry: e }, i) => (
+                  <CharacterCard
+                    id={e.id}
+                    name={e.data.name}
+                    tagline={e.data.tagline}
+                    creator={e.data.creator}
+                    tags={e.data.tags}
+                    cover={e.data.cover}
+                    coverAlt={e.data.coverAlt}
+                    coverStyle={e.data.coverStyle}
+                    index={i}
+                  />
+                ))}
+              </div>
+            </section>
+          )
+        }
+
+        <footer class="report">
+          <p>内容有问题？比如链接失效、署名错误、或侵犯了你的权益。</p>
+          <a class="btn btn--ghost" href={issueUrl} rel="noopener">报告问题</a>
+        </footer>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .detail {
+    padding-top: 26px;
+  }
+
+  .crumb {
+    display: flex;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    margin-bottom: 22px;
+  }
+
+  .crumb a:hover {
+    color: var(--accent);
+  }
+
+  .detail__grid {
+    display: grid;
+    gap: 30px;
+  }
+
+  @media (min-width: 900px) {
+    .detail__grid {
+      grid-template-columns: 292px 1fr;
+      gap: 52px;
+      align-items: start;
+    }
+
+    .detail__side {
+      position: sticky;
+      top: 84px;
+    }
+  }
+
+  .detail__cta {
+    width: 100%;
+    margin-top: 16px;
+  }
+
+  /* —— 信息表 —— */
+  .facts {
+    margin: 22px 0 0;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .facts__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--hairline);
+    font-size: 13px;
+  }
+
+  .facts__row dt {
+    color: var(--ink-muted);
+    flex-shrink: 0;
+  }
+
+  .facts__row dd {
+    margin: 0;
+    text-align: right;
+    color: var(--ink-soft);
+    word-break: break-word;
+  }
+
+  .facts__row dd a:hover {
+    color: var(--accent);
+  }
+
+  /* —— 标题区 —— */
+  .detail__name {
+    font-size: clamp(28px, 4.4vw, 40px);
+    line-height: 1.28;
+  }
+
+  .detail__tagline {
+    margin-top: 12px;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+    max-width: 40ch;
+  }
+
+  .detail__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 18px 0 0;
+  }
+
+  /* —— 开场白 —— */
+  .opening {
+    margin-top: 30px;
+    padding: 22px 24px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--r-md);
+  }
+
+  .opening__label {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .opening__quote {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 16.5px;
+    line-height: 1.8;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+
+  .opening__note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  /* —— 正文区块 —— */
+  .detail__main > .prose {
+    margin-top: 34px;
+  }
+
+  .block {
+    margin-top: 44px;
+    padding-top: 30px;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .block__title {
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+
+  .block__note {
+    margin-top: 12px;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    line-height: 1.7;
+  }
+
+  .list {
+    margin: 0;
+    padding-left: 1.2em;
+    font-size: 14.5px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+  }
+
+  .list a {
+    color: var(--accent);
+  }
+
+  /* —— 三步指引 —— */
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .steps__item {
+    display: flex;
+    gap: 14px;
+  }
+
+  .steps__num {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    font-size: 13px;
+    font-weight: 600;
+    display: grid;
+    place-items: center;
+    margin-top: 1px;
+  }
+
+  .steps__title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .steps__text {
+    font-size: 14.5px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+  }
+
+  .steps__note {
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    line-height: 1.7;
+  }
+
+  /* —— 来源列表 —— */
+  .sources {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sources__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--r-md);
+    font-size: 14px;
+    transition: border-color 0.16s ease, color 0.16s ease;
+  }
+
+  .sources__link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .sources__label {
+    font-weight: 500;
+  }
+
+  .sources__type {
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+
+  .sources__sum {
+    display: block;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    word-break: break-all;
+  }
+
+  /* —— 相关推荐 —— */
+  .related {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+
+  /* —— 举报 —— */
+  .report {
+    margin-top: 52px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hairline);
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  .report .btn {
+    margin-top: 14px;
+  }
+</style>

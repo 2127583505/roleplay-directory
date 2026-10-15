@@ -1,0 +1,228 @@
+---
+import { SITE, NAV, href, stripBase } from '../consts';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = SITE.description,
+} = Astro.props;
+
+const fullTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} · ${SITE.description}`;
+// pathname 带 base 前缀，先剥掉再和导航路径比较
+const path = stripBase(Astro.url.pathname);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#fbf7f3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, SITE.url).href} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="format-detection" content="telephone=no" />
+  </head>
+  <body>
+    <a class="skip-link" href={href('/#main')}>跳到主要内容</a>
+
+    <header class="site-header">
+      <div class="wrap site-header__inner">
+        <a class="brand" href={href('/')}>
+          <span class="brand__mark">{SITE.name}</span>
+          <span class="brand__sub">角色卡目录</span>
+        </a>
+        <nav class="nav" aria-label="主导航">
+          {
+            NAV.map((item) => {
+              const active =
+                item.path === '/'
+                  ? path === '/' || path.startsWith('/c/') || path.startsWith('/creator/')
+                  : path.startsWith(item.path);
+              return (
+                <a class:list={['nav__link', { 'is-active': active }]} href={href(item.path)}>
+                  {item.label}
+                </a>
+              );
+            })
+          }
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap site-footer__inner">
+        <div class="site-footer__col">
+          <p class="site-footer__name">{SITE.name}</p>
+          <p class="site-footer__note">不托管内容 · 不提供算力 · 不做推荐算法</p>
+        </div>
+        <nav class="site-footer__nav" aria-label="页脚导航">
+          <a href={href('/about/')}>关于</a>
+          <a href={href('/guide/')}>创作指南</a>
+          <a href={href('/spec/')}>数据规范</a>
+          <a href={href('/import/')}>导入工具</a>
+          <a href={href('/submit/')}>提交角色卡</a>
+          <a href={SITE.repo} rel="noopener">源码仓库</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  main {
+    flex: 1;
+  }
+
+  /* —— 页头 —— */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    backdrop-filter: saturate(1.6) blur(14px);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 62px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .brand__mark {
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .brand__sub {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--ink-faint);
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav__link {
+    padding: 7px 12px;
+    border-radius: var(--r-pill);
+    font-size: 14px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    transition: background-color 0.16s ease, color 0.16s ease;
+  }
+
+  .nav__link:hover {
+    background: var(--bg-soft);
+    color: var(--ink);
+  }
+
+  .nav__link.is-active {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  @media (max-width: 640px) {
+    .brand__sub {
+      display: none;
+    }
+
+    .site-header__inner {
+      flex-wrap: wrap;
+      padding-block: 10px;
+      min-height: 0;
+    }
+
+    .nav {
+      width: 100%;
+      margin-inline: calc(var(--gutter) * -1);
+      padding-inline: var(--gutter);
+    }
+
+    .nav__link {
+      padding: 6px 10px;
+      font-size: 13.5px;
+    }
+  }
+
+  /* —— 页脚 —— */
+  .site-footer {
+    margin-top: 72px;
+    border-top: 1px solid var(--hairline);
+    background: var(--bg-soft);
+  }
+
+  .site-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    padding-block: 34px 42px;
+  }
+
+  .site-footer__name {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .site-footer__note {
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+  }
+
+  .site-footer__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  .site-footer__nav a:hover {
+    color: var(--accent);
+  }
+</style>

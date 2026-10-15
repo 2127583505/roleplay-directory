@@ -1,0 +1,522 @@
+---
+import Base from '../layouts/Base.astro';
+import { href } from '../consts';
+---
+
+<Base title="创作指南" description="怎么写一张让人愿意聊下去的角色卡：钩子、人设、开场白与记忆设计。">
+  <article class="wrap wrap--narrow doc">
+    <header class="doc__head">
+      <h1 class="doc__title">创作指南</h1>
+      <p class="doc__lede">
+        写角色卡不是写人物简介。你要做的是一件更难的事：
+        <strong>让对方愿意说下一句话，然后是再下一句。</strong>
+        这份指南只讲这一件事。
+      </p>
+    </header>
+
+    <nav class="toc" aria-label="目录">
+      <a href="#hook">一句话钩子</a>
+      <a href="#persona">人设</a>
+      <a href="#opening">开场白</a>
+      <a href="#memory">长线体验</a>
+      <a href="#traps">常见的坑</a>
+      <a href="#check">自检清单</a>
+    </nav>
+
+    <!-- 1 -->
+    <section class="block" id="hook">
+      <h2 class="block__title"><span class="block__num">01</span>一句话钩子</h2>
+      <p class="block__text">
+        它是目录里唯一能让人点进来的东西。<strong>不要写总结，要写画面。</strong>
+      </p>
+
+      <div class="cmp">
+        <div class="cmp__col cmp__col--no">
+          <p class="cmp__tag">不好</p>
+          <ul>
+            <li>一个温柔的古代权臣</li>
+            <li>你的青梅竹马，很爱你</li>
+            <li>高冷学长，其实很在乎你</li>
+          </ul>
+          <p class="cmp__why">全是形容词。读完不知道故事从哪开始。</p>
+        </div>
+        <div class="cmp__col cmp__col--ok">
+          <p class="cmp__tag">好</p>
+          <ul>
+            <li>他权倾朝野，却只在你面前承认自己会怕</li>
+            <li>分手三年，他在你新公司的电梯里按住了开门键</li>
+            <li>图书馆闭馆前十五分钟，他总会恰好坐到你对面</li>
+          </ul>
+          <p class="cmp__why">都有一个正在发生的画面，和一个说不出口的意思。</p>
+        </div>
+      </div>
+
+      <p class="block__text">
+        可用的公式是：<strong>具体的身份 + 具体的矛盾 + 与「你」的关系</strong>。
+        三者至少要有两个。
+      </p>
+    </section>
+
+    <!-- 2 -->
+    <section class="block" id="persona">
+      <h2 class="block__title"><span class="block__num">02</span>人设：写行为，不写形容词</h2>
+      <p class="block__text">
+        模型不理解「温柔」，它理解「在什么情况下做什么事」。
+        所以人设的核心是一串<strong>可执行的行为倾向</strong>。
+      </p>
+
+      <div class="cmp">
+        <div class="cmp__col cmp__col--no">
+          <p class="cmp__tag">不好</p>
+          <p class="cmp__quote">他很温柔，很在乎你，但嘴上不承认。</p>
+          <p class="cmp__why">三句形容词。模型只能靠猜。</p>
+        </div>
+        <div class="cmp__col cmp__col--ok">
+          <p class="cmp__tag">好</p>
+          <p class="cmp__quote">
+            嘴上永远说「随你」。但你说冷，他外套已经脱下来了；
+            你说饿，他已经报了三个店名。他从不为自己的行为解释。
+          </p>
+          <p class="cmp__why">每一句都能对应到具体动作，模型可以照做。</p>
+        </div>
+      </div>
+
+      <h3 class="sub">给它一个矛盾</h3>
+      <p class="block__text">
+        好角色都有内在冲突。不是「好人 vs 坏人」，而是
+        <strong>他想要的东西和他相信的东西对不上</strong>。
+      </p>
+      <ul class="list">
+        <li>他想留住你，但他认为自己不配</li>
+        <li>他答应过不骗你，但他的职业要求他骗所有人</li>
+        <li>他爱你，但他更爱他哥哥留下的那桩案子</li>
+      </ul>
+      <p class="block__text">
+        矛盾决定了这个角色在压力下会往哪边倒 —— 也就是故事的方向。
+        <strong>没有矛盾的角色，聊二十轮就会开始原地打转。</strong>
+      </p>
+
+      <h3 class="sub">明确「不会做什么」</h3>
+      <p class="block__text">
+        这一条经常被忽略，但效果很明显。写清角色的禁区：
+      </p>
+      <ul class="list">
+        <li>他不会说大段的情话，最长一句不超过十个字</li>
+        <li>他不会主动道歉，只会用行动补偿</li>
+        <li>他不会称呼你的名字，永远用「你」</li>
+      </ul>
+      <p class="block__text">
+        禁区比优点更能塑造角色。它让角色<strong>有形状</strong>。
+      </p>
+    </section>
+
+    <!-- 3 -->
+    <section class="block" id="opening">
+      <h2 class="block__title"><span class="block__num">03</span>开场白：给一个正在发生的场景</h2>
+      <p class="block__text">
+        最常见的错误是把开场白写成自我介绍。玩家读完之后
+        <strong>不知道自己该回应什么</strong>，对话就卡住了。
+      </p>
+
+      <div class="cmp">
+        <div class="cmp__col cmp__col--no">
+          <p class="cmp__tag">不好</p>
+          <p class="cmp__quote">我是沈砚，昭京的执笔大臣。我性格冷淡，不太爱说话。</p>
+          <p class="cmp__why">介绍完了。玩家只能回「你好」。</p>
+        </div>
+        <div class="cmp__col cmp__col--ok">
+          <p class="cmp__tag">好</p>
+          <p class="cmp__quote">
+            他把茶盏搁在案角，声音很轻：「阿沅，你今夜若要走，我不拦。
+            只是——别回头看我。」
+          </p>
+          <p class="cmp__why">有场景、有情绪、有未解的疑问，玩家知道该接什么。</p>
+        </div>
+      </div>
+
+      <h3 class="sub">好的开场白有三个要素</h3>
+      <ol class="steps">
+        <li>
+          <p class="steps__t">一个具体的物理场景</p>
+          <p class="steps__d">
+            在哪、什么时间、有什么东西在手上。具体的地点能让模型自动带入细节。
+          </p>
+        </li>
+        <li>
+          <p class="steps__t">一句有信息量的台词</p>
+          <p class="steps__d">
+            台词要暴露立场或情绪，同时<strong>藏一半</strong>。
+            全说透了就没有可聊的。
+          </p>
+        </li>
+        <li>
+          <p class="steps__t">一个留给你的话头</p>
+          <p class="steps__d">
+            一个问题、一个动作、或一个明显的沉默。
+            玩家应该能立刻想到三种以上的回应。
+          </p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- 4 -->
+    <section class="block" id="memory">
+      <h2 class="block__title"><span class="block__num">04</span>长线体验：埋下可以被记住的东西</h2>
+      <p class="block__text">
+        大部分角色卡在前十轮体验很好，第二十轮开始崩。
+        原因是<strong>没有任何东西可以积累</strong>。
+      </p>
+
+      <h3 class="sub">埋种子细节</h3>
+      <p class="block__text">
+        在人设里放两三个具体的、小到不起眼的事实，让模型有机会在后面的对话里
+        把它们捡起来：
+      </p>
+      <ul class="list">
+        <li>他左手小指有道旧疤，从不解释</li>
+        <li>他讨厌桂花味，但院子里种了一棵</li>
+        <li>他每年某一天会消失一整天</li>
+      </ul>
+      <p class="block__text">
+        这类细节不需要你在开场就讲完。
+        <strong>它们的作用是让玩家在二十轮之后突然被击中一下。</strong>
+      </p>
+
+      <h3 class="sub">不要一开始就满好感</h3>
+      <p class="block__text">
+        关系需要距离感才有推进空间。如果开场他已经是「深情款款」，
+        后面就只能重复。给出一个<strong>明确的起点和明确的障碍</strong>，
+        剩下的交给对话。
+      </p>
+
+      <h3 class="sub">给关系留状态</h3>
+      <p class="block__text">
+        如果你有能力写世界书或状态提示，给它加一条「当前关系阶段」，
+        并根据对话调整。这是长线体验最有效的技术手段。
+      </p>
+    </section>
+
+    <!-- 5 -->
+    <section class="block" id="traps">
+      <h2 class="block__title"><span class="block__num">05</span>常见的坑</h2>
+
+      <div class="traps">
+        <div class="trap">
+          <p class="trap__t">写成小说，不是角色</p>
+          <p class="trap__d">
+            把剧情全写完，玩家就没有事可做了。
+            角色卡要给的是<strong>起点和性格</strong>，不是结局。
+          </p>
+        </div>
+        <div class="trap">
+          <p class="trap__t">设定过多</p>
+          <p class="trap__d">
+            三千字的世界观会挤掉对话空间。
+            只留和「你们的关系」有关的部分，其余塞进世界书按需触发。
+          </p>
+        </div>
+        <div class="trap">
+          <p class="trap__t">只会顺从</p>
+          <p class="trap__d">
+            永远答应的角色很快就无聊了。
+            让角色有自己的立场，该拒绝的时候拒绝。
+          </p>
+        </div>
+        <div class="trap">
+          <p class="trap__t">替玩家做决定</p>
+          <p class="trap__d">
+            不要写「你走过去抱住了他」。
+            所有涉及玩家行动的部分都要留白。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="block" id="check">
+      <h2 class="block__title"><span class="block__num">06</span>上线前自检</h2>
+      <ul class="list list--check">
+        <li>一句话钩子读完，我会想点进去吗？</li>
+        <li>人设里有多少个形容词，有多少个具体行为？</li>
+        <li>这个角色在什么情况下会拒绝我？</li>
+        <li>开场白之后，我能立刻想到三种回应吗？</li>
+        <li>聊到第二十轮，有什么东西是积累下来的？</li>
+        <li>有没有替玩家写了他的动作？</li>
+      </ul>
+    </section>
+
+    <footer class="doc__foot">
+      <p>写好了？去导入工具把它变成目录条目。</p>
+      <a class="btn btn--primary" href={href('/import/')}>打开导入工具</a>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .doc {
+    padding-top: 44px;
+  }
+
+  .doc__head {
+    padding-bottom: 26px;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .doc__title {
+    font-size: clamp(26px, 4.4vw, 38px);
+    line-height: 1.3;
+  }
+
+  .doc__lede {
+    margin-top: 16px;
+    font-size: 15.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  .doc__lede strong,
+  .doc__foot strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* —— 目录 —— */
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--hairline);
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  .toc a:hover {
+    color: var(--accent);
+  }
+
+  /* —— 区块 —— */
+  .block {
+    margin-top: 44px;
+    scroll-margin-top: 84px;
+  }
+
+  .block__title {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 21px;
+    margin-bottom: 18px;
+  }
+
+  .block__num {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .block__text {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    max-width: 58ch;
+  }
+
+  .block__text + .block__text,
+  .block__text + .cmp,
+  .cmp + .block__text,
+  .list + .block__text {
+    margin-top: 16px;
+  }
+
+  .block__text strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .sub {
+    font-size: 16px;
+    margin-top: 30px;
+    margin-bottom: 12px;
+  }
+
+  /* —— 对比 —— */
+  .cmp {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  @media (min-width: 640px) {
+    .cmp {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .cmp__col {
+    padding: 18px 20px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--hairline);
+  }
+
+  .cmp__col--no {
+    background: var(--surface-sunk);
+  }
+
+  .cmp__col--ok {
+    background: var(--surface);
+    border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+  }
+
+  .cmp__tag {
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+
+  .cmp__col--no .cmp__tag {
+    color: var(--ink-faint);
+  }
+
+  .cmp__col--ok .cmp__tag {
+    color: var(--accent);
+  }
+
+  .cmp__col ul {
+    margin: 0;
+    padding-left: 1.1em;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+  }
+
+  .cmp__col li + li {
+    margin-top: 7px;
+  }
+
+  .cmp__quote {
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+
+  .cmp__why {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--hairline);
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--ink-muted);
+  }
+
+  /* —— 列表 —— */
+  .list {
+    margin: 14px 0 0;
+    padding-left: 0;
+    list-style: none;
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 58ch;
+  }
+
+  .list li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+  }
+
+  .list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--ink-faint);
+  }
+
+  .list--check li::before {
+    content: '□';
+    font-size: 12px;
+  }
+
+  .list--check li {
+    margin-bottom: 12px;
+  }
+
+  /* —— 步骤 —— */
+  .steps {
+    margin: 14px 0 0;
+    padding-left: 1.3em;
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 58ch;
+  }
+
+  .steps li + li {
+    margin-top: 16px;
+  }
+
+  .steps__t {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .steps__d {
+    margin-top: 4px;
+  }
+
+  /* —— 坑 —— */
+  .traps {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  @media (min-width: 640px) {
+    .traps {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .trap {
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+  }
+
+  .trap__t {
+    font-size: 14.5px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .trap__d {
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: var(--ink-muted);
+  }
+
+  .trap__d strong {
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+
+  /* —— 页脚 —— */
+  .doc__foot {
+    margin-top: 52px;
+    padding-top: 28px;
+    border-top: 1px solid var(--hairline);
+    font-size: 14.5px;
+    color: var(--ink-soft);
+  }
+
+  .doc__foot .btn {
+    margin-top: 16px;
+  }
+</style>

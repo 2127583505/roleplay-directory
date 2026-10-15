@@ -1,0 +1,387 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import CharacterCard from '../components/CharacterCard.astro';
+import { PINNED_TAGS } from '../consts';
+
+const entries = await getCollection('characters');
+
+/** 默认排序：精选优先，其次按更新时间倒序 */
+const sorted = [...entries].sort((a, b) => {
+  const fa = a.data.featured ? 1 : 0;
+  const fb = b.data.featured ? 1 : 0;
+  if (fa !== fb) return fb - fa;
+  const ta = a.data.updated?.getTime() ?? 0;
+  const tb = b.data.updated?.getTime() ?? 0;
+  return tb - ta;
+});
+
+/** 标签筛选条：固定标签在前，其余按出现频次补足 */
+const freq = new Map<string, number>();
+for (const e of entries) {
+  for (const t of e.data.tags) freq.set(t, (freq.get(t) ?? 0) + 1);
+}
+
+const pinned = PINNED_TAGS.filter((t) => freq.has(t));
+const others = [...freq.keys()]
+  .filter((t) => !pinned.includes(t))
+  .sort((a, b) => (freq.get(b) ?? 0) - (freq.get(a) ?? 0));
+const filterTags = [...pinned, ...others].slice(0, 14);
+
+const total = entries.length;
+---
+
+<Base>
+  <section class="hero">
+    <div class="wrap">
+      <p class="hero__eyebrow">创作者共建的角色卡目录</p>
+      <h1 class="hero__title">找一个值得熬夜的人</h1>
+      <p class="hero__sub">
+        这里的每一个角色，都由创作者亲手写下人设和开场白。<br />
+        挑一个，去你的软件里开始你们的故事。
+      </p>
+
+      <div class="search">
+        <svg
+          class="search__icon"
+          viewBox="0 0 20 20"
+          width="18"
+          height="18"
+          aria-hidden="true"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+        >
+          <circle cx="9" cy="9" r="6.2"></circle>
+          <path d="m13.6 13.6 4 4"></path>
+        </svg>
+        <input
+          class="search__input"
+          type="search"
+          data-search
+          placeholder="搜索名字、性格、题材或标签…"
+          aria-label="搜索角色"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="chips" role="group" aria-label="按标签筛选">
+        <button class="chip is-active" data-chip="" type="button">全部</button>
+        {
+          filterTags.map((t) => (
+            <button class="chip" data-chip={t} type="button">
+              {t}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap listing" data-directory>
+    <div class="listing__bar">
+      <h2 class="listing__title">
+        全部角色
+        <span class="listing__count"><span data-count>{total}</span> 个</span>
+      </h2>
+      <label class="sort">
+        <span class="visually-hidden">排序方式</span>
+        <select class="select" data-sort>
+          <option value="default">最近更新</option>
+          <option value="name">按名字</option>
+          <option value="creator">按创作者</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="grid" data-grid>
+      {
+        sorted.map((entry, i) => (
+          <CharacterCard
+            id={entry.id}
+            name={entry.data.name}
+            tagline={entry.data.tagline}
+            creator={entry.data.creator}
+            tags={entry.data.tags}
+            cover={entry.data.cover}
+            coverAlt={entry.data.coverAlt}
+            coverStyle={entry.data.coverStyle}
+            index={i}
+          />
+        ))
+      }
+    </div>
+
+    <div class="empty" data-empty hidden>
+      <p class="empty__title">没有找到符合条件的角色</p>
+      <p class="empty__note">换个词试试，或者取消标签筛选。</p>
+      <button class="btn btn--ghost" data-reset type="button">清除筛选</button>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const dir = document.querySelector<HTMLElement>('[data-directory]');
+  if (dir) {
+    const grid = dir.querySelector<HTMLElement>('[data-grid]')!;
+    const cards = Array.from(dir.querySelectorAll<HTMLElement>('.card'));
+    const search = dir.querySelector<HTMLInputElement>('[data-search]')!;
+    const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-chip]'));
+    const sortSel = dir.querySelector<HTMLSelectElement>('[data-sort]')!;
+    const countEl = dir.querySelector<HTMLElement>('[data-count]')!;
+    const emptyEl = dir.querySelector<HTMLElement>('[data-empty]')!;
+    const resetBtn = dir.querySelector<HTMLButtonElement>('[data-reset]')!;
+
+    let activeTag = '';
+
+    const applyFilters = () => {
+      const q = search.value.trim().toLowerCase();
+      let shown = 0;
+
+      for (const card of cards) {
+        const haystack = [
+          card.dataset.name,
+          card.dataset.tagline,
+          card.dataset.creator,
+          card.dataset.tags,
+        ]
+          .join(' ')
+          .toLowerCase();
+
+        const byTag = !activeTag || (card.dataset.tags ?? '').split(',').includes(activeTag);
+        const byQuery = !q || haystack.includes(q);
+        const visible = byTag && byQuery;
+
+        card.hidden = !visible;
+        if (visible) shown++;
+      }
+
+      countEl.textContent = String(shown);
+      emptyEl.hidden = shown !== 0;
+    };
+
+    const applySort = (mode: string) => {
+      const collator = new Intl.Collator('zh-Hans-CN');
+      const arr = [...cards];
+      arr.sort((a, b) => {
+        if (mode === 'name') return collator.compare(a.dataset.name ?? '', b.dataset.name ?? '');
+        if (mode === 'creator')
+          return collator.compare(a.dataset.creator ?? '', b.dataset.creator ?? '');
+        return Number(a.dataset.index ?? 0) - Number(b.dataset.index ?? 0);
+      });
+      for (const c of arr) grid.appendChild(c);
+    };
+
+    search.addEventListener('input', applyFilters);
+
+    for (const chip of chips) {
+      chip.addEventListener('click', () => {
+        activeTag = chip.dataset.chip ?? '';
+        for (const c of chips) c.classList.toggle('is-active', c === chip);
+        applyFilters();
+      });
+    }
+
+    sortSel.addEventListener('change', () => applySort(sortSel.value));
+
+    resetBtn.addEventListener('click', () => {
+      activeTag = '';
+      search.value = '';
+      for (const c of chips) c.classList.toggle('is-active', c.dataset.chip === '');
+      applyFilters();
+    });
+  }
+</script>
+
+<style>
+  /* —— Hero —— */
+  .hero {
+    padding-block: 40px 26px;
+  }
+
+  @media (min-width: 768px) {
+    .hero {
+      padding-block: 62px 34px;
+    }
+  }
+
+  .hero__eyebrow {
+    font-size: 12.5px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .hero__title {
+    /* 中文标题不能用拉丁字号。密度高，必须收小并放大行高 */
+    font-size: clamp(30px, 5.6vw, 52px);
+    line-height: 1.32;
+    letter-spacing: 0.01em;
+    max-width: 16ch;
+  }
+
+  .hero__sub {
+    margin-top: 16px;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+    max-width: 46ch;
+  }
+
+  .search {
+    position: relative;
+    margin-top: 26px;
+    max-width: 460px;
+  }
+
+  .search__icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-faint);
+    pointer-events: none;
+  }
+
+  .search__input {
+    width: 100%;
+    padding: 13px 16px 13px 43px;
+    font-size: 15px;
+    background: var(--surface);
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--r-pill);
+    box-shadow: var(--shadow-xs);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .search__input::placeholder {
+    color: var(--ink-faint);
+  }
+
+  .search__input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  /* —— 标签筛选 —— */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 22px;
+  }
+
+  .chip {
+    padding: 7px 14px;
+    font-size: 13.5px;
+    line-height: 1.3;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--hairline-strong);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background-color 0.16s ease, border-color 0.16s ease,
+      color 0.16s ease;
+  }
+
+  .chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .chip.is-active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--bg);
+  }
+
+  /* —— 列表 —— */
+  .listing {
+    padding-top: 12px;
+  }
+
+  .listing__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--hairline);
+    margin-bottom: 22px;
+  }
+
+  .listing__title {
+    font-size: 17px;
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+  }
+
+  .listing__count {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 400;
+    color: var(--ink-faint);
+    letter-spacing: 0;
+  }
+
+  .sort .select {
+    width: auto;
+    padding: 8px 34px 8px 13px;
+    font-size: 13.5px;
+    border-radius: var(--r-pill);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+  }
+
+  @media (min-width: 640px) {
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(216px, 1fr));
+      gap: 22px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(228px, 1fr));
+      gap: 26px;
+    }
+  }
+
+  /* hidden 属性必须能压过任何 display 声明 */
+  .grid > .card[hidden] {
+    display: none;
+  }
+
+  /* —— 空状态 —— */
+  .empty {
+    padding: 68px 20px;
+    text-align: center;
+  }
+
+  .empty[hidden] {
+    display: none;
+  }
+
+  .empty__title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--ink);
+  }
+
+  .empty__note {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+
+  .empty .btn {
+    margin-top: 20px;
+  }
+</style>

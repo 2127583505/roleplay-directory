@@ -1,0 +1,31 @@
+name: 校验条目
+
+# 只校验，不部署。构建失败会在 PR 上直接显示。
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 准备 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      # 内容集合的字段校验发生在构建期。
+      # 字段缺失、类型错误、网址格式不对，都会在这里报出来。
+      - name: 构建（含字段校验）
+        run: npm run build

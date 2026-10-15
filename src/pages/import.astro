@@ -1,0 +1,688 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, PINNED_TAGS } from '../consts';
+---
+
+<Base
+  title="从现有角色卡导入"
+  description="拖入 PNG 或 JSON 角色卡，在浏览器里本地解析出元数据，自动生成目录条目。文件不会上传到任何服务器。"
+>
+  <section class="wrap wrap--narrow head">
+    <h1 class="head__title">从现有角色卡导入</h1>
+    <p class="head__sub">
+      把你已经做好的 PNG 或 JSON 角色卡拖进来，会自动读出名字、标签、开场白这些信息，
+      填好缺的部分就能生成一条目录条目。<br />
+      整个过程在你的浏览器里完成，<strong>没有任何文件会被上传</strong>。
+    </p>
+  </section>
+
+  <section class="wrap wrap--narrow">
+    <!-- 拖放区 -->
+    <div class="drop" data-drop tabindex="0" role="button" aria-label="选择或拖入角色卡文件">
+      <svg
+        class="drop__icon"
+        viewBox="0 0 32 32"
+        width="34"
+        height="34"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M16 21V7m0 0-5 5m5-5 5 5"></path>
+        <path d="M5 21v3a3 3 0 0 0 3 3h16a3 3 0 0 0 3-3v-3"></path>
+      </svg>
+      <p class="drop__title">拖入 PNG / JSON 角色卡</p>
+      <p class="drop__note">或者点击选择文件</p>
+      <input class="visually-hidden" type="file" accept=".png,.json,image/png,application/json" data-file />
+    </div>
+
+    <p class="status" data-status role="status" aria-live="polite"></p>
+
+    <!-- 表单 -->
+    <form class="panel form" data-form hidden>
+      <fieldset class="form__group">
+        <legend class="form__legend">从卡片里读出来的</legend>
+
+        <div class="field">
+          <label class="field__label" for="f-name">角色名</label>
+          <input class="input" id="f-name" data-f="name" type="text" required />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-creator">创作者</label>
+          <input class="input" id="f-creator" data-f="creator" type="text" required />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-tags">标签 <span class="field__opt">用逗号分隔</span></label>
+          <input class="input" id="f-tags" data-f="tags" type="text" />
+          <p class="field__hint">
+            常用标签：{PINNED_TAGS.join('、')}
+          </p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-greeting">开场白节选 <span class="field__opt">短，一两句就够</span></label>
+          <textarea class="textarea" id="f-greeting" data-f="greetingPreview" rows="3"></textarea>
+          <p class="field__hint">只放节选。完整开场白留在角色卡文件里，不在本站展示。</p>
+        </div>
+      </fieldset>
+
+      <fieldset class="form__group">
+        <legend class="form__legend">需要你补充的</legend>
+
+        <div class="field">
+          <label class="field__label" for="f-slug">文件名 <span class="field__req">必填</span></label>
+          <input class="input" id="f-slug" data-f="slug" type="text" placeholder="shen-yan" required />
+          <p class="field__hint">
+            小写字母、数字、连字符。会变成网址：<code>/c/你的文件名/</code>
+          </p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-tagline">一句话钩子 <span class="field__req">必填</span></label>
+          <input class="input" id="f-tagline" data-f="tagline" type="text" placeholder="他权倾朝野，却只在你面前承认自己会怕" required />
+          <p class="field__hint">决定别人会不会点进来。要具体，要有张力，不要写成角色简介。</p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-source-url">角色卡本体地址 <span class="field__req">必填</span></label>
+          <input class="input" id="f-source-url" data-f="sourceUrl" type="url" placeholder="https://github.com/你的名字/character-cards" required />
+          <p class="field__hint">
+            本站不保存也不分发角色卡文件，只指向这里。可以是仓库、网盘或 IPFS 地址。
+          </p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-source-type">本体类型</label>
+          <select class="select" id="f-source-type" data-f="sourceType">
+            <option value="png">SillyTavern PNG 卡</option>
+            <option value="json">JSON 卡片</option>
+            <option value="repo">Git 仓库</option>
+            <option value="ipfs">IPFS</option>
+            <option value="url">其他链接</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-creator-url">创作者主页 <span class="field__opt">选填</span></label>
+          <input class="input" id="f-creator-url" data-f="creatorUrl" type="url" placeholder="https://github.com/你的名字" />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-cover">封面图地址 <span class="field__opt">选填</span></label>
+          <input class="input" id="f-cover" data-f="cover" type="url" placeholder="https://…/cover.jpg" />
+          <p class="field__hint">建议 4:5 竖版。留空会自动生成一张抽象封面。不要用真人照片。</p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-cover-style">封面配色 <span class="field__opt">选填，留空自动</span></label>
+          <select class="select" id="f-cover-style" data-f="coverStyle">
+            <option value="">自动</option>
+            <option value="rose">玫瑰</option>
+            <option value="peach">蜜桃</option>
+            <option value="lavender">薰衣草</option>
+            <option value="sage">鼠尾草</option>
+            <option value="sky">晴空</option>
+            <option value="mauve">藕荷</option>
+            <option value="sand">暖沙</option>
+            <option value="clay">陶土</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-intro">简介 <span class="field__req">必填</span></label>
+          <textarea class="textarea" id="f-intro" data-f="intro" rows="8" required
+            placeholder={'## 关于他\n\n两三段讲清楚这个人是谁、故事从哪开始。\n\n## 为什么推荐\n\n适合什么口味的玩家。\n\n## 使用建议\n\n推荐搭配什么世界书、怎么开场更好。'}></textarea>
+          <p class="field__hint">支持 Markdown。建议分「关于他 / 为什么推荐 / 使用建议」三段。</p>
+        </div>
+      </fieldset>
+
+      <div class="form__actions">
+        <button class="btn btn--ghost" type="button" data-demo>填入示例</button>
+        <button class="btn btn--ghost" type="button" data-reset>清空</button>
+      </div>
+    </form>
+
+    <!-- 输出 -->
+    <section class="output" data-output hidden>
+      <div class="output__bar">
+        <h2 class="output__title">生成的条目文件</h2>
+        <div class="output__actions">
+          <button class="btn btn--ghost" type="button" data-copy>复制</button>
+          <button class="btn btn--primary" type="button" data-download>下载 .md</button>
+        </div>
+      </div>
+      <pre class="output__pre"><code data-code></code></pre>
+
+      <div class="next">
+        <h3 class="next__title">下一步：提交到本站</h3>
+        <ol class="next__list">
+          <li>点上面的「下载 .md」，得到条目文件。</li>
+          <li>
+            打开仓库 <a href={SITE.repo} rel="noopener">{SITE.repo.replace('https://', '')}</a>，
+            把文件放到 <code>src/content/characters/</code> 目录下。
+          </li>
+          <li>提一个 Pull Request，等社区 review 通过后就会出现在目录里。</li>
+        </ol>
+      </div>
+    </section>
+  </section>
+</Base>
+
+<script>
+  /** 生成 YAML 安全的双引号字符串 */
+  const q = (s: string) => `"${String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+
+  /** base64 -> UTF-8 */
+  function b64ToUtf8(b64: string): string {
+    const clean = b64.replace(/\s/g, '');
+    const bin = atob(clean);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+
+  /**
+   * 从 PNG 二进制里取出角色卡 JSON。
+   * Character Card V2 存在 tEXt chunk 的 chara 关键字里（base64），
+   * V3 用 ccv3 关键字，同时保留 chara 兼容。
+   */
+  function readCardFromPng(buf: ArrayBuffer): unknown | null {
+    const bytes = new Uint8Array(buf);
+    const sig = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+    for (let i = 0; i < 8; i++) {
+      if (bytes[i] !== sig[i]) return null;
+    }
+
+    const view = new DataView(buf);
+    let offset = 8;
+    let ccv3: string | null = null;
+    let chara: string | null = null;
+
+    while (offset + 8 <= bytes.length) {
+      const len = view.getUint32(offset);
+      const type = String.fromCharCode(
+        bytes[offset + 4],
+        bytes[offset + 5],
+        bytes[offset + 6],
+        bytes[offset + 7],
+      );
+      const dataStart = offset + 8;
+
+      if (type === 'tEXt' || type === 'iTXt') {
+        const raw = bytes.subarray(dataStart, dataStart + len);
+        const nul = raw.indexOf(0);
+        if (nul > 0) {
+          const keyword = new TextDecoder('latin1').decode(raw.subarray(0, nul));
+          let payload = '';
+
+          if (type === 'tEXt') {
+            payload = new TextDecoder('latin1').decode(raw.subarray(nul + 1));
+          } else {
+            // iTXt: keyword \0 compressionFlag compressionMethod \0 lang \0 translated \0 text
+            const flag = raw[nul + 1];
+            let p = nul + 3;
+            const langEnd = raw.indexOf(0, p);
+            p = langEnd + 1;
+            const transEnd = raw.indexOf(0, p);
+            p = transEnd + 1;
+            if (flag === 0) {
+              payload = new TextDecoder('utf-8').decode(raw.subarray(p));
+            }
+            // 压缩的 iTXt 暂不处理，留空即可
+          }
+
+          if (keyword === 'ccv3') ccv3 = payload;
+          else if (keyword === 'chara') chara = payload;
+        }
+      }
+
+      if (type === 'IEND') break;
+      offset = dataStart + len + 4;
+    }
+
+    const chosen = ccv3 || chara;
+    if (!chosen) return null;
+    try {
+      return JSON.parse(b64ToUtf8(chosen));
+    } catch {
+      return null;
+    }
+  }
+
+  type Fields = Record<string, string>;
+
+  const ui = {
+    drop: document.querySelector<HTMLElement>('[data-drop]')!,
+    file: document.querySelector<HTMLInputElement>('[data-file]')!,
+    status: document.querySelector<HTMLElement>('[data-status]')!,
+    form: document.querySelector<HTMLFormElement>('[data-form]')!,
+    output: document.querySelector<HTMLElement>('[data-output]')!,
+    code: document.querySelector<HTMLElement>('[data-code]')!,
+    copy: document.querySelector<HTMLButtonElement>('[data-copy]')!,
+    download: document.querySelector<HTMLButtonElement>('[data-download]')!,
+    demo: document.querySelector<HTMLButtonElement>('[data-demo]')!,
+    reset: document.querySelector<HTMLButtonElement>('[data-reset]')!,
+  };
+
+  const inputs = (): (HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement)[] =>
+    Array.from(ui.form.querySelectorAll('[data-f]'));
+
+  const get = (key: string): string => {
+    const el = inputs().find((i) => i.dataset.f === key);
+    return el ? el.value.trim() : '';
+  };
+
+  const set = (key: string, value: string) => {
+    const el = inputs().find((i) => i.dataset.f === key);
+    if (el && value) el.value = value;
+  };
+
+  /** 把角色卡 JSON 的字段映射到本站条目 */
+  function applyCard(card: Record<string, unknown>) {
+    const str = (v: unknown) => (typeof v === 'string' ? v : '');
+    const data = (card.data && typeof card.data === 'object' ? card.data : card) as Record<
+      string,
+      unknown
+    >;
+
+    set('name', str(data.name));
+    set('creator', str(data.creator) || str(card.creator));
+    set('creatorUrl', str(card.creator_url) || str(card.creatorUrl));
+
+    const tags = data.tags ?? card.tags;
+    if (Array.isArray(tags)) set('tags', tags.map(String).join(', '));
+
+    // 开场白只取节选：取第一段，限长
+    const first = str(data.first_mes) || str(card.first_mes);
+    if (first) {
+      const para = first.trim().split(/\n{2,}/)[0].replace(/\s+/g, ' ').trim();
+      set('greetingPreview', para.length > 70 ? `${para.slice(0, 70)}…` : para);
+    }
+
+    // 人设描述可以当作简介的起手素材
+    const desc = str(data.description) || str(data.personality) || str(card.description);
+    if (desc && !get('intro')) {
+      const brief = desc.trim().split(/\n{2,}/).slice(0, 2).join('\n\n');
+      set('intro', `## 关于他\n\n${brief.slice(0, 600)}`);
+    }
+
+    const notes = str(data.creator_notes) || str(card.creator_notes);
+    if (notes) {
+      ui.status.textContent += ' （卡片自带的 creator_notes 未导入，可自行取舍）';
+    }
+  }
+
+  function buildEntry(): string {
+    const tags = get('tags')
+      .split(/[,，]/)
+      .map((t) => t.trim())
+      .filter(Boolean);
+
+    const lines: string[] = ['---'];
+    lines.push(`name: ${q(get('name'))}`);
+    lines.push(`tagline: ${q(get('tagline'))}`);
+    lines.push(`creator: ${q(get('creator'))}`);
+    if (get('creatorUrl')) lines.push(`creatorUrl: ${q(get('creatorUrl'))}`);
+    lines.push(`license: "CC-BY-NC-SA-4.0"`);
+
+    if (tags.length) {
+      lines.push('tags:');
+      for (const t of tags) lines.push(`  - ${q(t)}`);
+    }
+
+    lines.push(`version: "1.0.0"`);
+    lines.push(`updated: ${new Date().toISOString().slice(0, 10)}`);
+
+    if (get('cover')) lines.push(`cover: ${q(get('cover'))}`);
+    if (get('coverStyle')) lines.push(`coverStyle: ${get('coverStyle')}`);
+
+    lines.push('source:');
+    lines.push(`  - type: ${get('sourceType') || 'png'}`);
+    lines.push(`    url: ${q(get('sourceUrl'))}`);
+    lines.push(`    label: ${q('角色卡本体')}`);
+    lines.push(`spec: "character-card-v3"`);
+    if (get('greetingPreview')) lines.push(`greetingPreview: ${q(get('greetingPreview'))}`);
+
+    lines.push('---', '');
+    lines.push(get('intro'));
+    lines.push('');
+    return lines.join('\n');
+  }
+
+  function refresh() {
+    const hasContent = get('name') || get('tagline') || get('intro');
+    if (!hasContent) {
+      ui.output.hidden = true;
+      return;
+    }
+    ui.code.textContent = buildEntry();
+    ui.output.hidden = false;
+  }
+
+  function revealForm() {
+    ui.form.hidden = false;
+    const first = ui.form.querySelector<HTMLInputElement>('[data-f="slug"]');
+    first?.focus();
+  }
+
+  function handleFile(file: File) {
+    ui.status.textContent = '正在本地解析…';
+
+    file.arrayBuffer().then((buf) => {
+      let card: Record<string, unknown> | null = null;
+
+      if (file.name.toLowerCase().endsWith('.json') || file.type === 'application/json') {
+        try {
+          card = JSON.parse(new TextDecoder('utf-8').decode(buf));
+        } catch {
+          card = null;
+        }
+      } else {
+        card = readCardFromPng(buf) as Record<string, unknown> | null;
+      }
+
+      if (!card) {
+        ui.status.textContent =
+          '没读到角色卡信息。可能是这张 PNG 里没有嵌入卡片数据，或者它是压缩格式的 iTXt。可以改用 JSON 文件，或手动填写。';
+        revealForm();
+        refresh();
+        return;
+      }
+
+      ui.status.textContent = `解析成功：${file.name}`;
+      revealForm();
+      applyCard(card);
+      refresh();
+    });
+  }
+
+  // —— 事件 ——
+  ui.drop.addEventListener('click', () => ui.file.click());
+  ui.drop.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      ui.file.click();
+    }
+  });
+
+  ui.file.addEventListener('change', () => {
+    const f = ui.file.files?.[0];
+    if (f) handleFile(f);
+  });
+
+  for (const evt of ['dragenter', 'dragover'] as const) {
+    ui.drop.addEventListener(evt, (e) => {
+      e.preventDefault();
+      ui.drop.classList.add('is-over');
+    });
+  }
+  for (const evt of ['dragleave', 'drop'] as const) {
+    ui.drop.addEventListener(evt, (e) => {
+      e.preventDefault();
+      ui.drop.classList.remove('is-over');
+    });
+  }
+  ui.drop.addEventListener('drop', (e) => {
+    const f = (e as DragEvent).dataTransfer?.files?.[0];
+    if (f) handleFile(f);
+  });
+
+  ui.form.addEventListener('input', refresh);
+
+  ui.copy.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(ui.code.textContent ?? '');
+      ui.copy.textContent = '已复制';
+      setTimeout(() => (ui.copy.textContent = '复制'), 1600);
+    } catch {
+      ui.status.textContent = '复制失败，请手动选中代码块内容。';
+    }
+  });
+
+  ui.download.addEventListener('click', () => {
+    const slug = get('slug') || 'character';
+    const blob = new Blob([ui.code.textContent ?? ''], {
+      type: 'text/markdown;charset=utf-8',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${slug}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  const DEMO: Fields = {
+    slug: 'shen-yan',
+    name: '沈砚',
+    creator: '灯下',
+    creatorUrl: 'https://github.com/2127583505',
+    tags: '古风, 权谋, 慢热',
+    tagline: '他权倾朝野，却只在你面前承认自己会怕',
+    greetingPreview: '他把茶盏搁在案角，声音很轻：「阿沅，你今夜若要走，我不拦。」',
+    sourceUrl: 'https://github.com/2127583505/character-cards',
+    sourceType: 'png',
+    intro:
+      '## 关于他\n\n昭京最年轻的执笔大臣，二十岁入阁，二十五岁手里握着半个朝堂的生死。\n\n## 为什么推荐\n\n写给喜欢长线博弈的人。前二十轮你会觉得他冷淡，但每一次他不动声色地把风险从你身上挪走，都是一次告白。\n\n## 使用建议\n\n- 推荐搭配世界书，否则他会默认你没入过宫。\n- 从「一个需要他帮忙的麻烦」开场，节奏会好很多。',
+  };
+
+  ui.demo.addEventListener('click', () => {
+    for (const [k, v] of Object.entries(DEMO)) set(k, v);
+    ui.status.textContent = '已填入示例数据。';
+    revealForm();
+    refresh();
+  });
+
+  ui.reset.addEventListener('click', () => {
+    for (const el of inputs()) {
+      if (el instanceof HTMLSelectElement) el.selectedIndex = 0;
+      else el.value = '';
+    }
+    ui.status.textContent = '';
+    ui.output.hidden = true;
+  });
+</script>
+
+<style>
+  .head {
+    padding-top: 44px;
+    padding-bottom: 30px;
+  }
+
+  .head__title {
+    font-size: clamp(25px, 4.4vw, 36px);
+    line-height: 1.32;
+  }
+
+  .head__sub {
+    margin-top: 16px;
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+
+  .head__sub strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* —— 拖放区 —— */
+  .drop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 44px 24px;
+    border: 1.5px dashed var(--hairline-strong);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.18s ease, background-color 0.18s ease;
+  }
+
+  .drop:hover,
+  .drop.is-over {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .drop__icon {
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .drop__title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .drop__note {
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  .status {
+    margin-top: 14px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--ink-muted);
+  }
+
+  .status:empty {
+    display: none;
+  }
+
+  /* —— 表单 —— */
+  .form {
+    margin-top: 24px;
+  }
+
+  .form__group {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  .form__group + .form__group {
+    margin-top: 34px;
+    padding-top: 28px;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .form__legend {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    padding: 0;
+    margin-bottom: 20px;
+  }
+
+  .field__opt {
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    font-weight: 400;
+  }
+
+  .field__req {
+    font-size: 11.5px;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  .form__actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid var(--hairline);
+  }
+
+  /* —— 输出 —— */
+  .output {
+    margin-top: 36px;
+  }
+
+  .output__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .output__title {
+    font-size: 16px;
+  }
+
+  .output__actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .output__actions .btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .output__pre {
+    margin: 0;
+    padding: 20px;
+    background: var(--surface-sunk);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+    overflow-x: auto;
+    max-height: 460px;
+    overflow-y: auto;
+  }
+
+  .output__pre code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+    white-space: pre;
+  }
+
+  .next {
+    margin-top: 34px;
+    padding: 22px 24px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+  }
+
+  .next__title {
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+
+  .next__list {
+    margin: 0;
+    padding-left: 1.25em;
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+  }
+
+  .next__list a {
+    color: var(--accent);
+    word-break: break-all;
+  }
+
+  .next__list code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    background: var(--surface-sunk);
+    padding: 2px 6px;
+    border-radius: 5px;
+  }
+</style>

@@ -1,0 +1,17 @@
+{
+  "name": "roleplay-directory",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "一个零成本、零后端、社区驱动的 AI 角色扮演角色卡目录站",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "set-owner": "node scripts/set-owner.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  }
+}

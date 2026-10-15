@@ -122,21 +122,29 @@ const total = entries.length;
 </Base>
 
 <script>
-  const dir = document.querySelector<HTMLElement>('[data-directory]');
-  if (dir) {
-    const grid = dir.querySelector<HTMLElement>('[data-grid]')!;
-    const cards = Array.from(dir.querySelectorAll<HTMLElement>('.card'));
-    const search = dir.querySelector<HTMLInputElement>('[data-search]')!;
-    const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-chip]'));
-    const sortSel = dir.querySelector<HTMLSelectElement>('[data-sort]')!;
-    const countEl = dir.querySelector<HTMLElement>('[data-count]')!;
-    const emptyEl = dir.querySelector<HTMLElement>('[data-empty]')!;
-    const resetBtn = dir.querySelector<HTMLButtonElement>('[data-reset]')!;
+  /**
+   * 目录页的筛选与排序。
+   *
+   * 注意：搜索框在 hero 区，不在 [data-directory] 容器里，
+   * 所以必须从 document 取，不能用容器去 querySelector —— 那样会拿到 null，
+   * 后续 addEventListener 抛错会把整个脚本打断，导致所有按钮失效。
+   *
+   * 每个控件独立绑定，任何一个缺失都不影响其他控件。
+   */
+  const grid = document.querySelector<HTMLElement>('[data-grid]');
+  const search = document.querySelector<HTMLInputElement>('[data-search]');
+  const sortSel = document.querySelector<HTMLSelectElement>('[data-sort]');
+  const countEl = document.querySelector<HTMLElement>('[data-count]');
+  const emptyEl = document.querySelector<HTMLElement>('[data-empty]');
+  const resetBtn = document.querySelector<HTMLButtonElement>('[data-reset]');
+  const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-chip]'));
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.card'));
 
+  if (grid && cards.length) {
     let activeTag = '';
 
     const applyFilters = () => {
-      const q = search.value.trim().toLowerCase();
+      const q = (search?.value ?? '').trim().toLowerCase();
       let shown = 0;
 
       for (const card of cards) {
@@ -157,8 +165,8 @@ const total = entries.length;
         if (visible) shown++;
       }
 
-      countEl.textContent = String(shown);
-      emptyEl.hidden = shown !== 0;
+      if (countEl) countEl.textContent = String(shown);
+      if (emptyEl) emptyEl.hidden = shown !== 0;
     };
 
     const applySort = (mode: string) => {
@@ -173,7 +181,7 @@ const total = entries.length;
       for (const c of arr) grid.appendChild(c);
     };
 
-    search.addEventListener('input', applyFilters);
+    search?.addEventListener('input', applyFilters);
 
     for (const chip of chips) {
       chip.addEventListener('click', () => {
@@ -183,14 +191,17 @@ const total = entries.length;
       });
     }
 
-    sortSel.addEventListener('change', () => applySort(sortSel.value));
+    const sel = sortSel;
+    if (sel) sel.addEventListener('change', () => applySort(sel.value));
 
-    resetBtn.addEventListener('click', () => {
-      activeTag = '';
-      search.value = '';
-      for (const c of chips) c.classList.toggle('is-active', c.dataset.chip === '');
-      applyFilters();
-    });
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        activeTag = '';
+        if (search) search.value = '';
+        for (const c of chips) c.classList.toggle('is-active', c.dataset.chip === '');
+        applyFilters();
+      });
+    }
   }
 </script>
 

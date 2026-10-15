@@ -1,0 +1,34 @@
+name: 从提交表单生成条目
+
+# 有人用「提交一个角色」表单开了 issue，就自动生成条目文件并开 PR。
+# 这样维护者只需要在 PR 上点一次合并，不用手工复制粘贴。
+on:
+  issues:
+    types: [opened, edited, reopened, labeled]
+
+# 只申请这次任务必需的三项权限
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  entry:
+    # 只处理带「待收录」标签的 issue（表单会自动打上这个标签）
+    if: contains(github.event.issue.labels.*.name, '待收录')
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 准备 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 生成条目并开 PR
+        run: node .github/scripts/issue-to-entry.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          DEFAULT_BRANCH: main

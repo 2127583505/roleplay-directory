@@ -85,6 +85,13 @@ body:
       description: 可以留空，会自动生成一张。不要用真人照片。
       placeholder: 留空也可以
 
+  - type: input
+    id: slug
+    attributes:
+      label: 网址用的名字
+      description: 几个小写英文字母，会成为他主页网址的最后一段，比如 /c/shen-yan/。留空会自动生成一个。
+      placeholder: shen-yan
+
   - type: checkboxes
     id: confirm
     attributes:

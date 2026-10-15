@@ -218,6 +218,21 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
         </div>
 
         {
+          c.persona?.world && (
+            <section class="block" id="world">
+              <h2 class="block__title">他所在的世界</h2>
+              {c.persona.world.split(/\n{2,}/).map((para) => (
+                <p class="world__p">{para.trim()}</p>
+              ))}
+              <p class="block__note">
+                这一段已经并进上面那段提示词，复制粘贴的时候就一起带过去了 ——
+                你不用另外准备任何东西。
+              </p>
+            </section>
+          )
+        }
+
+        {
           c.requires.length > 0 && (
             <section class="block" id="prepare">
               <h2 class="block__title">使用前需要准备</h2>
@@ -579,6 +594,18 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
     font-size: 12.5px;
     color: var(--ink-muted);
     line-height: 1.7;
+  }
+
+  /* 他所在的世界 —— 世界观直接摊开给读者看 */
+  .world__p {
+    font-size: 14.5px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  .world__p + .world__p {
+    margin-top: 12px;
   }
 
   /* 卡片下载区：正文与列表之间的呼吸 */

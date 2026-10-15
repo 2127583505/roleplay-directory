@@ -119,6 +119,22 @@ import { PINNED_TAGS, href } from '../consts';
             rows="3"
             placeholder={'不会主动告白，哪怕情绪到了极点，也只会换个方式做事。\n不会哭，但会在很静的时候长时间不说话。'}
           ></textarea>
+
+          <h2 class="step__q step__q--sub">他所在的那个世界，是什么样？</h2>
+          <p class="step__hint">
+            地名、规矩、门派、行话 —— 那些不写清楚、他就答不上来的东西。
+            别写剧情，只写事实。留空也能用，填了会更稳。
+          </p>
+          <textarea
+            class="textarea"
+            data-f="world"
+            rows="4"
+            placeholder={'昭京，本朝国都。朝会每五日一次，入宫凭腰牌。\n朝堂上的事分两层：台面上的诏令，和台面下的请托。'}
+          ></textarea>
+          <p class="step__hint">
+            这一段会跟人设并进同一段话。客户端里那些「世界书」文件，
+            用豆包和 DeepSeek 的人打不开 —— 写在这里，读者就不必打开。
+          </p>
         </section>
 
         <!-- 步骤 4 -->
@@ -418,13 +434,18 @@ import { PINNED_TAGS, href } from '../consts';
       const greeting = val('greeting');
       const persona = val('persona');
       const limits = val('limits');
+      const world = val('world');
       const tags = [...selectedTags];
 
       slug = slugify(name);
 
       const descriptionParts = [persona];
       if (limits) descriptionParts.push(`【他做不到的】\n${limits}`);
-      const description = descriptionParts.filter(Boolean).join('\n\n');
+      const who = descriptionParts.filter(Boolean).join('\n\n');
+
+      // 世界观并进卡片正文：和站里其他角色同一套结构，
+      // 客户端那边也就不必再单独配一份「世界书」
+      const description = world ? `${world}\n\n${who}` : who;
 
       // 1) 角色卡 —— Character Card V2
       const card = {
@@ -452,7 +473,8 @@ import { PINNED_TAGS, href } from '../consts';
       // 1.5) 提示词 —— 复制粘贴进豆包 / DeepSeek 就能聊。
       //      这是创作中心的第一输出：同一份人设，换成对话 App 能直接吃的样子。
       promptText = buildPrompt(name, {
-        who: description,
+        world,
+        who,
         behavior: persona.split('\n')[0] ?? '',
         scenario: greeting.split(/\n{2,}/)[0] ?? '',
         greeting,
@@ -487,6 +509,21 @@ import { PINNED_TAGS, href } from '../consts';
 
       lines.push(`spec: "character-card-v2"`);
       lines.push(`greetingPreview: ${q(greeting.replace(/\s+/g, ' ').slice(0, 60))}`);
+
+      // persona 才是站里的数据源：详情页那段提示词、下载的卡片文件，都从这里生成。
+      // 条目里必须带上它 —— 否则贴回站里，读者就复制不到那段话。
+      const yamlBlock = (key: string, text: string) => {
+        lines.push(`  ${key}: |`);
+        for (const l of text.split('\n')) lines.push(l.trim() ? `    ${l}` : '');
+      };
+
+      lines.push('persona:');
+      if (world) yamlBlock('world', world);
+      yamlBlock('who', who);
+      yamlBlock('behavior', persona.split('\n')[0] ?? '');
+      yamlBlock('scenario', greeting.split(/\n{2,}/)[0] ?? '');
+      yamlBlock('greeting', greeting);
+
       lines.push('---', '');
 
       lines.push('## 关于他', '', persona || '（写两三句他是谁、故事从哪开始）', '');

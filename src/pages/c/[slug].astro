@@ -158,19 +158,57 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
                 <button class="btn btn--primary" type="button" data-prompt-copy>
                   复制提示词
                 </button>
-                <a class="btn btn--ghost" href={href('/use/')}>详细的图文步骤</a>
+                <a class="btn btn--ghost" href={href('/use/')}>完整图文步骤</a>
               </div>
-
-              <ol class="minsteps">
-                <li>点「复制提示词」，按钮会变成「已复制，去粘贴吧」</li>
-                <li>打开豆包或 DeepSeek，新建一个对话</li>
-                <li>粘贴进输入框，发送。剩下的交给他</li>
-              </ol>
 
               <details class="promptdetails">
                 <summary>先看看这段话里写了什么</summary>
                 <pre class="promptdetails__pre"><code data-prompt-text>{cardPrompt}</code></pre>
               </details>
+
+              <p class="pick__q">复制好了。接下来看你平时用哪个，我分开说：</p>
+
+              <div class="pick">
+                <button class="pick__btn is-on" type="button" data-app="deepseek">
+                  我在用 DeepSeek
+                </button>
+                <button class="pick__btn" type="button" data-app="doubao">
+                  我在用豆包
+                </button>
+              </div>
+
+              <div class="howto" data-app-panel="deepseek">
+                <ol class="minsteps">
+                  <li>打开 DeepSeek，点「新对话」</li>
+                  <li>长按输入框选「粘贴」（电脑上 Ctrl+V），发送</li>
+                  <li>他会以 {c.name} 的身份回你第一句。之后正常聊就行</li>
+                </ol>
+                <p class="howto__note">
+                  每开一个新对话都要重新粘一次。把「深度思考」关掉，他会更像在跟你聊天。
+                </p>
+              </div>
+
+              <div class="howto" data-app-panel="doubao" hidden>
+                <ol class="minsteps">
+                  <li>
+                    先直接粘一次：打开豆包，新建对话 → 粘贴 → 发送。<strong
+                      >这一步任何版本都成立</strong
+                    >
+                  </li>
+                  <li>
+                    想以后不用再粘：进「智能体」广场，找「+ 创建 AI 智能体」，
+                    名字填「{c.name}」
+                  </li>
+                  <li>
+                    把刚才那段话<strong>整段</strong>粘进「设定描述」，点「完成」。
+                    审核过后，从「我的 → 智能体」里就能找到他
+                  </li>
+                </ol>
+                <p class="howto__note">
+                  找不到「创建智能体」也没关系，光用第一条就够。
+                  手机和电脑工作端的入口不一样，<a href={href('/use/#doubao')}>这里有完整说明</a>。
+                </p>
+              </div>
             </section>
           )
         }
@@ -181,13 +219,36 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
 
         {
           c.requires.length > 0 && (
-            <section class="block">
+            <section class="block" id="prepare">
               <h2 class="block__title">使用前需要准备</h2>
               <ul class="list">
                 {c.requires.map((r) => (
                   <li>{r}</li>
                 ))}
               </ul>
+
+              <div class="notice">
+                <p class="notice__t">这两个字看着唬人，其实你不用准备</p>
+                <p>
+                  「世界书」是角色扮演客户端里的一个文件 ——
+                  一份按关键词自动触发的背景设定，让角色知道地名、门派、规矩这些事。
+                  它本来是要装进软件里的，用豆包和 DeepSeek 的人根本打不开它。
+                </p>
+                {c.persona?.world ? (
+                  <p>
+                    <strong>在豆包或 DeepSeek 里没有这个东西，也不需要。</strong>
+                    这个世界的设定已经写进上面那段提示词了 —— 你复制过去，他就知道那些地名和规矩。
+                    要下载的那份卡片文件里也带着同一份内容，两边一样，不需要额外准备什么。
+                  </p>
+                ) : (
+                  <p>
+                    <strong>在豆包或 DeepSeek 里没有这个机制，你也不用去找它。</strong>
+                    聊的时候如果他对某些地名、门派反应含糊，直接在对话里补一句就行，比如：<br
+                    />
+                    <em>（补充设定：你所在的门派每十年收一次外门弟子，我入门那年刚好是第十年）</em>
+                  </p>
+                )}
+              </div>
             </section>
           )
         }
@@ -347,6 +408,20 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
         sel?.addRange(range);
       }
     }
+  });
+
+  // 换个 App 就换一套步骤 —— 豆包和 DeepSeek 的入口完全不一样
+  const appBtns = document.querySelectorAll<HTMLButtonElement>('[data-app]');
+  const appPanels = document.querySelectorAll<HTMLElement>('[data-app-panel]');
+
+  appBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const app = btn.dataset.app;
+      appBtns.forEach((b) => b.classList.toggle('is-on', b === btn));
+      appPanels.forEach((p) => {
+        p.hidden = p.dataset.appPanel !== app;
+      });
+    });
   });
 </script>
 
@@ -688,6 +763,94 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
 
   .minsteps li + li {
     margin-top: 6px;
+  }
+
+  /* —— 选 App：豆包和 DeepSeek 各一套步骤 —— */
+  .pick__q {
+    margin-top: 26px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    max-width: 50ch;
+  }
+
+  .pick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .pick__btn {
+    padding: 9px 16px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+
+  .pick__btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .pick__btn.is-on {
+    color: var(--surface);
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .howto {
+    margin-top: 18px;
+    padding: 20px 22px;
+    background: var(--surface-sunk);
+    border-radius: var(--r-md);
+  }
+
+  .howto[hidden] {
+    display: none;
+  }
+
+  .howto .minsteps {
+    margin-top: 0;
+  }
+
+  .howto__note {
+    margin-top: 14px;
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: var(--ink-muted);
+    max-width: 50ch;
+  }
+
+  /* —— 世界书：说清它不用准备 —— */
+  .notice {
+    margin-top: 20px;
+    padding: 18px 20px;
+    background: var(--surface-sunk);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--r-md) var(--r-md) 0;
+  }
+
+  .notice__t {
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .notice p {
+    font-size: 13.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  .notice p + p {
+    margin-top: 10px;
   }
 
   /* —— 提示词复制 —— */

@@ -12,6 +12,8 @@ export interface Persona {
   behavior?: string;
   scenario?: string;
   greeting?: string;
+  /** 世界观 —— 客户端里那份「世界书」的人话版本 */
+  world?: string;
 }
 
 /** 规则部分：让对话保持角色的关键约束 */
@@ -28,6 +30,13 @@ export function buildPrompt(name: string, persona: Persona): string {
 
   parts.push(`从现在开始，你是「${name}」，按下面的人设和我对话。`);
   parts.push('');
+
+  // 世界观先于人物，因为「他在的世界是什么样」决定了「他会怎么答」
+  if (persona.world) {
+    parts.push('【这个世界的设定】');
+    parts.push(persona.world.trim());
+    parts.push('');
+  }
 
   if (persona.who) {
     parts.push('【他是谁】');
@@ -95,12 +104,18 @@ export function buildCardJson(opts: {
 }): string {
   const { name, persona, creator, version, tags } = opts;
 
+  // 世界观并进 description：客户端里它本该是独立的 character_book，
+  // 但并进正文能让「站内提示词」和「下载的卡片」内容完全一致，不产生两套真相。
+  const description = persona.world?.trim()
+    ? `${persona.world.trim()}\n\n${persona.who}`
+    : persona.who;
+
   const card = {
     spec: 'chara_card_v2',
     spec_version: '2.0',
     data: {
       name,
-      description: persona.who,
+      description,
       personality: persona.behavior ?? '',
       scenario: persona.scenario ?? '',
       first_mes: persona.greeting ?? '',

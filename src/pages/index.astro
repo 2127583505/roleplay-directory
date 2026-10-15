@@ -188,6 +188,9 @@ const total = entries.length;
         activeTag = chip.dataset.chip ?? '';
         for (const c of chips) c.classList.toggle('is-active', c === chip);
         applyFilters();
+        // 结果在标签下方，滚过去让筛选生效这件事看得见 ——
+        // 否则点了标签，视口里没有任何变化，会以为按钮坏了。
+        grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
 
@@ -349,6 +352,8 @@ const total = entries.length;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 18px;
+    /* 顶部有吸顶导航，滚动到这里时别被盖住 */
+    scroll-margin-top: 82px;
   }
 
   @media (min-width: 640px) {

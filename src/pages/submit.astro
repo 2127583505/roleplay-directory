@@ -1,111 +1,111 @@
 ---
 import Base from '../layouts/Base.astro';
 import { SITE, href } from '../consts';
+
+const newIssue = `${SITE.repo}/issues/new?template=new-character.yml`;
 ---
 
-<Base title="提交角色卡" description="如何把你的角色卡提交到灯下目录。">
+<Base title="放到目录上" description="把你写好的角色放到目录上，不需要会写代码。">
   <article class="wrap wrap--narrow doc">
     <header class="doc__head">
-      <h1 class="doc__title">提交角色卡</h1>
+      <h1 class="doc__title">放到目录上</h1>
       <p class="doc__lede">
-        这个目录由创作者共建。提交方式就是给仓库提一个 Pull Request ——
-        没有注册、没有后台、没有审核费。
+        写好了就想让别人也能找到他。两条路，看你是哪种情况。
       </p>
     </header>
 
     <section class="ways">
-      <a class="way" href={href('/import/')}>
-        <p class="way__tag">推荐</p>
-        <h2 class="way__title">用导入工具</h2>
+      <a class="way" href={href('/start/')}>
+        <p class="way__tag">还没有角色</p>
+        <h2 class="way__title">先去写一个</h2>
         <p class="way__text">
-          把已经做好的 PNG 或 JSON 角色卡拖进页面，自动读出元数据，补全后一键生成条目文件。
+          回答几个问题就行。写完会给你两份文件，一份自己用，一份用来提交。
         </p>
       </a>
-      <a class="way" href={href('/spec/')}>
-        <p class="way__tag">手动</p>
-        <h2 class="way__title">按规范手写</h2>
+      <a class="way" href={href('/import/')}>
+        <p class="way__tag">已经有卡了</p>
+        <h2 class="way__title">把现成的拿过来</h2>
         <p class="way__text">
-          在 <code>src/content/characters/</code> 新建一个 <code>.md</code> 文件，
-          按字段规范填写。适合一次提交多张卡。
+          把已经做好的角色卡文件拖进去，会自动读出名字、标签和开场白。
         </p>
       </a>
     </section>
 
     <section class="block">
-      <h2 class="block__title">三步走</h2>
-      <ol class="steps">
+      <h2 class="block__title">然后呢</h2>
+      <p class="block__text">
+        点下面的按钮，会打开一张表格。把角色的信息填进去，提交就好。
+      </p>
+      <p class="block__text block__text--cta">
+        <a class="btn btn--primary" href={newIssue} rel="noopener">填表提交</a>
+      </p>
+
+      <div class="note">
+        <p class="note__title">需要注册一个账号</p>
+        <p class="note__text">
+          提交要通过 GitHub 完成 —— 因为大家写的角色都放在那儿。
+          注册是免费的，而且整个过程不用写一行代码。
+        </p>
+        <p class="note__text">
+          没有账号也不想注册？在别的地方告诉我，我帮你放上去。
+        </p>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="block__title">之后会发生什么</h2>
+      <ol class="flow">
         <li>
-          <p class="steps__t">Fork 仓库</p>
-          <p class="steps__d">
-            打开 <a href={SITE.repo} rel="noopener">{SITE.repo.replace('https://', '')}</a>
-            ，点右上角 Fork。
-          </p>
+          <p class="flow__t">有人看一眼</p>
+          <p class="flow__d">确认一下链接能打开、署名没问题。一般几天内。</p>
         </li>
         <li>
-          <p class="steps__t">添加条目文件</p>
-          <p class="steps__d">
-            把生成好的 <code>你的文件名.md</code> 放进
-            <code>src/content/characters/</code>。文件名会成为网址，用小写字母和连字符。
-          </p>
+          <p class="flow__t">上线</p>
+          <p class="flow__d">通过之后他就会出现在目录里，别人能搜到了。</p>
         </li>
         <li>
-          <p class="steps__t">提 Pull Request</p>
-          <p class="steps__d">
-            提交后 CI 会自动校验字段格式。通过后再由社区 review 合并，合并即上线。
-          </p>
+          <p class="flow__t">想改随时说</p>
+          <p class="flow__d">改名、换封面、更新版本，回来讲一声就行。</p>
         </li>
       </ol>
     </section>
 
     <section class="block">
-      <h2 class="block__title">会被合并的</h2>
+      <h2 class="block__title">什么样的会被收</h2>
       <ul class="list list--ok">
-        <li>角色卡本体有稳定、可公开访问的地址</li>
-        <li>有明确的一句话说清「这个人是谁、故事从哪开始」</li>
-        <li>简介是你自己写的，不是复制粘贴角色卡原文</li>
-        <li>署名和授权填写正确，改编作品标注了来源</li>
+        <li>角色卡有一个能公开打开的下载地址</li>
+        <li>一句话钩子写得具体，看得出这个故事从哪开始</li>
+        <li>简介是你自己写的，不是复制角色卡里的原文</li>
+        <li>署名写对了，改编别人的作品也标了来源</li>
       </ul>
     </section>
 
     <section class="block">
-      <h2 class="block__title">会被拒绝的</h2>
+      <h2 class="block__title">什么样的不会收</h2>
       <ul class="list list--no">
-        <li>角色卡本体无法下载，或者链接需要登录、限时有效</li>
-        <li>封面使用真人照片，或使用他人的肖像</li>
-        <li>直接复制他人的角色卡、简介或封面而不注明来源</li>
-        <li>条目内容与角色卡无关，或明显是广告</li>
-        <li>涉及真实存在的可识别个人，或未成年人相关的性化内容</li>
+        <li>下载链接打不开，或者需要登录才能看</li>
+        <li>封面用了真人照片</li>
+        <li>直接搬别人的角色卡、简介或封面，还不写来源</li>
+        <li>拿真人当原型（明星、网红、你认识的人）</li>
+        <li>涉及未成年人的成人内容</li>
+        <li>跟角色扮演没关系的内容，或者广告</li>
       </ul>
-      <p class="block__note">
-        这个名单会随着社区共识调整。有异议的条目可以直接在 PR 里讨论。
-      </p>
+      <p class="block__note">这个名单会变，有争议的可以在提交的地方讨论。</p>
     </section>
 
     <section class="block">
-      <h2 class="block__title">关于授权</h2>
+      <h2 class="block__title">署名和授权</h2>
       <p class="block__text">
-        角色卡内容的著作权归创作者本人。本站只索引元数据（名字、标签、简介、外链），
-        不复制也不分发角色卡文件。
+        角色卡是你的，著作权归你。目录上只是放一个介绍和下载链接，
+        不会把卡片内容复制过来。
       </p>
       <p class="block__text">
-        条目里的 <code>license</code> 字段由你自己选，常见选择是
-        <code>CC-BY-NC-SA-4.0</code>（署名-非商用-相同方式共享）或
-        <code>CC-BY-4.0</code>（仅需署名）。也可以填「保留所有权利」。
+        想让别人怎么用你的卡，你自己定。常见的两种：
+        <strong>署名就行</strong>，或者 <strong>署名、别商用、改了也要用同样的授权</strong>。
+        也可以写「未经允许不要转载」。
       </p>
       <p class="block__text">
-        站点本身的开源代码以 MIT 授权发布。
-      </p>
-    </section>
-
-    <section class="block">
-      <h2 class="block__title">需要帮忙？</h2>
-      <p class="block__text">
-        不熟悉 Git 也没关系。在仓库开一个 Issue 把你的信息贴出来，会有人帮你转成条目文件。
-      </p>
-      <p class="block__text">
-        <a class="btn btn--ghost" href={`${SITE.repo}/issues/new`} rel="noopener">
-          在仓库开 Issue
-        </a>
+        填表的时候不用纠结，写一句你希望的话就行，我们会按那个标。
       </p>
     </section>
   </article>
@@ -131,10 +131,10 @@ import { SITE, href } from '../consts';
     font-size: 15.5px;
     line-height: 1.85;
     color: var(--ink-soft);
-    max-width: 52ch;
+    max-width: 44ch;
   }
 
-  /* —— 两个入口 —— */
+  /* —— 两条路 —— */
   .ways {
     display: grid;
     gap: 14px;
@@ -189,62 +189,86 @@ import { SITE, href } from '../consts';
   }
 
   .block__title {
-    font-size: 17px;
+    font-size: 18px;
     margin-bottom: 16px;
   }
 
   .block__text {
-    font-size: 14.5px;
+    font-size: 15px;
     line-height: 1.9;
     color: var(--ink-soft);
+    max-width: 48ch;
   }
 
   .block__text + .block__text {
-    margin-top: 13px;
+    margin-top: 14px;
+  }
+
+  .block__text--cta {
+    margin-top: 22px;
+  }
+
+  .block__text strong {
+    color: var(--ink);
+    font-weight: 600;
   }
 
   .block__note {
-    margin-top: 14px;
-    font-size: 12.5px;
+    margin-top: 16px;
+    font-size: 13px;
     color: var(--ink-muted);
     line-height: 1.75;
   }
 
-  .block code,
-  .way code,
-  .steps code {
-    font-family: var(--font-mono);
-    font-size: 12.5px;
+  /* —— 账号提示 —— */
+  .note {
+    margin-top: 26px;
+    padding: 18px 20px;
     background: var(--surface-sunk);
-    padding: 2px 6px;
-    border-radius: 5px;
+    border-radius: var(--r-md);
+    max-width: 52ch;
   }
 
-  /* —— 步骤 —— */
-  .steps {
+  .note__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .note__text {
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: var(--ink-muted);
+  }
+
+  .note__text + .note__text {
+    margin-top: 9px;
+  }
+
+  /* —— 流程 —— */
+  .flow {
     margin: 0;
     padding-left: 1.3em;
-    font-size: 14.5px;
+    font-size: 15px;
     line-height: 1.85;
     color: var(--ink-soft);
+    max-width: 48ch;
   }
 
-  .steps li + li {
+  .flow li + li {
     margin-top: 16px;
   }
 
-  .steps__t {
+  .flow__t {
     font-weight: 600;
     color: var(--ink);
   }
 
-  .steps__d {
+  .flow__d {
     margin-top: 4px;
-  }
-
-  .steps__d a {
-    color: var(--accent);
-    word-break: break-all;
+    font-size: 14px;
+    color: var(--ink-muted);
   }
 
   /* —— 清单 —— */
@@ -252,21 +276,21 @@ import { SITE, href } from '../consts';
     margin: 0;
     padding-left: 0;
     list-style: none;
-    font-size: 14.5px;
-    line-height: 1.85;
+    font-size: 15px;
+    line-height: 1.9;
     color: var(--ink-soft);
+    max-width: 48ch;
   }
 
   .list li {
     position: relative;
-    padding-left: 24px;
+    padding-left: 20px;
     margin-bottom: 9px;
   }
 
   .list li::before {
     position: absolute;
-    left: 2px;
-    top: 0;
+    left: 4px;
     font-size: 13px;
   }
 

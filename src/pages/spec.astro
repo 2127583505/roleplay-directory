@@ -178,8 +178,8 @@ featured: true
     <header class="doc__head">
       <h1 class="doc__title">数据规范</h1>
       <p class="doc__lede">
-        每个角色对应 <code>src/content/characters/</code> 下的一个
-        <code>.md</code> 文件。文件名就是网址，用小写字母、数字和连字符。
+        这是给要自己动手改文件的人看的。如果你只是想写个角色，
+        用「<a href={href('/start/')}>写一个角色</a>」就行，不需要看懂这页。
       </p>
     </header>
 
@@ -187,12 +187,12 @@ featured: true
       <h2 class="block__title">先说最重要的一条</h2>
       <div class="callout">
         <p>
-          <strong>本站不保存、不分发角色卡文件。</strong>
-          条目里只有元数据和一个指向你仓库的地址。
+          <strong>角色卡文件不在我们这儿。</strong>
+          它一直放在你自己的地方，目录上只留一个介绍和一个下载链接。
         </p>
         <p>
-          所以 <code>source</code> 是必填的 —— 没有它，这个条目就没有意义。
-          它也是本站能保持免费和不承担内容分发责任的原因。
+          所以 <code>source</code> 字段必须填 —— 它就是那个下载链接。
+          没有它，别人点进去拿不到东西。
         </p>
       </div>
     </section>

@@ -37,7 +37,7 @@ export const SITE = {
   /** 站名。改这里即可全站生效 */
   name: '灯下',
   /** 用于 <title> 后缀与页脚 */
-  description: 'AI 角色卡目录 · 由创作者共建，零托管、零广告、零算法',
+  description: '各种类型的角色都在这里，挑一个带走就行',
   /** 站点地址，不含 base。改域名时同步修改 astro.config.mjs 的 site */
   url: 'https://2127583505.github.io',
   /** 仓库地址，用于「提交角色卡」等入口 */
@@ -47,9 +47,9 @@ export const SITE = {
 /** 主导航。路径不带 base，渲染时用 href() 处理 */
 export const NAV = [
   { path: '/', label: '全部角色' },
+  { path: '/start/', label: '写一个角色' },
   { path: '/guide/', label: '创作指南' },
-  { path: '/spec/', label: '数据规范' },
-  { path: '/submit/', label: '提交角色卡' },
+  { path: '/submit/', label: '放到目录上' },
 ] as const;
 
 /** 首页标签筛选用到的常用标签。其余标签会按出现频次自动补足 */

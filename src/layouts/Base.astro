@@ -68,15 +68,16 @@ const path = stripBase(Astro.url.pathname);
       <div class="wrap site-footer__inner">
         <div class="site-footer__col">
           <p class="site-footer__name">{SITE.name}</p>
-          <p class="site-footer__note">不托管内容 · 不提供算力 · 不做推荐算法</p>
+          <p class="site-footer__note">每个角色卡都由创作者自己保管，这里只帮你找到他们</p>
         </div>
         <nav class="site-footer__nav" aria-label="页脚导航">
-          <a href={href('/about/')}>关于</a>
+          <a href={href('/about/')}>这里是什么</a>
+          <a href={href('/start/')}>写一个角色</a>
           <a href={href('/guide/')}>创作指南</a>
+          <a href={href('/import/')}>导入已有的卡</a>
+          <a href={href('/submit/')}>放到目录上</a>
           <a href={href('/spec/')}>数据规范</a>
-          <a href={href('/import/')}>导入工具</a>
-          <a href={href('/submit/')}>提交角色卡</a>
-          <a href={SITE.repo} rel="noopener">源码仓库</a>
+          <a href={SITE.repo} rel="noopener">源码</a>
         </nav>
       </div>
     </footer>

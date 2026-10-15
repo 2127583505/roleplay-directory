@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { SITE, PINNED_TAGS } from '../consts';
+import { SITE, PINNED_TAGS, href } from '../consts';
 ---
 
 <Base
@@ -75,10 +75,10 @@ import { SITE, PINNED_TAGS } from '../consts';
         <legend class="form__legend">需要你补充的</legend>
 
         <div class="field">
-          <label class="field__label" for="f-slug">文件名 <span class="field__req">必填</span></label>
+          <label class="field__label" for="f-slug">网址用的名字 <span class="field__req">必填</span></label>
           <input class="input" id="f-slug" data-f="slug" type="text" placeholder="shen-yan" required />
           <p class="field__hint">
-            小写字母、数字、连字符。会变成网址：<code>/c/你的文件名/</code>
+            几个小写英文字母就行，比如 <code>shen-yan</code>。想不到就随便写一个，只用来生成网址。
           </p>
         </div>
 
@@ -159,14 +159,14 @@ import { SITE, PINNED_TAGS } from '../consts';
       <pre class="output__pre"><code data-code></code></pre>
 
       <div class="next">
-        <h3 class="next__title">下一步：提交到本站</h3>
+        <h3 class="next__title">下一步</h3>
         <ol class="next__list">
-          <li>点上面的「下载 .md」，得到条目文件。</li>
+          <li>点上面的「下载 .md」，把这个文件存下来。</li>
           <li>
-            打开仓库 <a href={SITE.repo} rel="noopener">{SITE.repo.replace('https://', '')}</a>，
-            把文件放到 <code>src/content/characters/</code> 目录下。
+            去 <a href={href('/submit/')}>放到目录上</a>，把角色的信息填进表格提交。
+            下载的文件一起传上去就行。
           </li>
-          <li>提一个 Pull Request，等社区 review 通过后就会出现在目录里。</li>
+          <li>有人看一眼没问题，他就会出现在目录里了。</li>
         </ol>
       </div>
     </section>

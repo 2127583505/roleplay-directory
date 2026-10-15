@@ -1,0 +1,952 @@
+---
+import Base from '../layouts/Base.astro';
+import { PINNED_TAGS, href } from '../consts';
+---
+
+<Base
+  title="开始写一个角色"
+  description="不会写？没关系。回答几个问题，就能把一个角色写出来。"
+>
+  <section class="wrap head">
+    <h1 class="head__title">写一个你自己的角色</h1>
+    <p class="head__sub">
+      不用会写小说，也不用会写代码。就回答几个问题，我帮你把它整理成能用的角色卡。
+    </p>
+  </section>
+
+  <section class="wrap wizard" data-wizard>
+    <div class="wizard__grid">
+      <!-- ——— 左：问题 ——— -->
+      <div class="wizard__main">
+        <div class="bar">
+          <div class="bar__dots" data-dots aria-hidden="true">
+            {[1, 2, 3, 4, 5].map((n) => <span class="bar__dot" data-dot={n} />)}
+          </div>
+          <p class="bar__step"><span data-stepno>1</span> / 5</p>
+        </div>
+
+        <!-- 步骤 1 -->
+        <section class="step" data-step="1">
+          <h2 class="step__q">你想写的这个人，叫什么名字？</h2>
+          <p class="step__hint">随便起。以后想改随时能改。</p>
+          <input class="input" data-f="name" type="text" placeholder="比如：沈砚" autocomplete="off" />
+
+          <h2 class="step__q step__q--sub">你喜欢什么样的故事？</h2>
+          <p class="step__hint">选几个。这决定了别人怎么找到他，选错也没关系。</p>
+          <div class="tags" data-tags>
+            {
+              PINNED_TAGS.map((t) => (
+                <button class="tag" type="button" data-tag={t}>
+                  {t}
+                </button>
+              ))
+            }
+          </div>
+        </section>
+
+        <!-- 步骤 2 -->
+        <section class="step" data-step="2" hidden>
+          <h2 class="step__q">用一句话说清：他是谁，你们之间有什么</h2>
+          <p class="step__hint">
+            这一句是别人在目录里唯一看得到的东西，所以它最重要。
+          </p>
+
+          <div class="tip">
+            <p class="tip__label">不要写总结，要写画面</p>
+            <div class="cmp">
+              <div class="cmp__col cmp__col--no">
+                <p class="cmp__tag">这样不行</p>
+                <p class="cmp__text">一个温柔的古代权臣</p>
+              </div>
+              <div class="cmp__col cmp__col--ok">
+                <p class="cmp__tag">这样好</p>
+                <p class="cmp__text">他权倾朝野，却只在你面前承认自己会怕</p>
+              </div>
+            </div>
+            <p class="tip__note">
+              公式：<strong>什么身份</strong> ＋ <strong>什么矛盾</strong> ＋
+              <strong>和你的关系</strong>。三者占两个就成立。
+            </p>
+          </div>
+
+          <textarea
+            class="textarea"
+            data-f="tagline"
+            rows="2"
+            placeholder="他权倾朝野，却只在你面前承认自己会怕"
+          ></textarea>
+          <p class="meter" data-tagline-meter></p>
+        </section>
+
+        <!-- 步骤 3 -->
+        <section class="step" data-step="3" hidden>
+          <h2 class="step__q">他平时会做什么？</h2>
+          <p class="step__hint">
+            写他做的事，别写他是什么样的人 —— 这一条最容易踩坑。
+          </p>
+
+          <div class="tip">
+            <p class="tip__label">形容词没用，行为才有用</p>
+            <div class="cmp">
+              <div class="cmp__col cmp__col--no">
+                <p class="cmp__tag">这样不行</p>
+                <p class="cmp__text">他很温柔，很在乎你，嘴上不承认。</p>
+              </div>
+              <div class="cmp__col cmp__col--ok">
+                <p class="cmp__tag">这样好</p>
+                <p class="cmp__text">
+                  嘴上永远说「随你」。但你说冷，他外套已经脱下来了；你说饿，他已经报了三个店名。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <textarea
+            class="textarea"
+            data-f="persona"
+            rows="5"
+            placeholder={'嘴上永远说「随你」。\n从不解释自己做过的事。\n不会说情话，最长的一句是「我在」。'}
+          ></textarea>
+
+          <h2 class="step__q step__q--sub">他有什么做不到的？</h2>
+          <p class="step__hint">
+            这一栏最容易被忽略，但最能让他像个人。比如「不会主动道歉」「永远不会先挂电话」。
+          </p>
+          <textarea
+            class="textarea"
+            data-f="limits"
+            rows="3"
+            placeholder={'不会主动告白，哪怕情绪到了极点，也只会换个方式做事。\n不会哭，但会在很静的时候长时间不说话。'}
+          ></textarea>
+        </section>
+
+        <!-- 步骤 4 -->
+        <section class="step" data-step="4" hidden>
+          <h2 class="step__q">你们第一次见面，是什么场景？</h2>
+          <p class="step__hint">
+            这是别人打开他之后看到的第一段话。写一个正在发生的画面，不要让他自我介绍。
+          </p>
+
+          <div class="tip">
+            <p class="tip__label">给一个画面，留一个话头</p>
+            <div class="cmp">
+              <div class="cmp__col cmp__col--no">
+                <p class="cmp__tag">这样不行</p>
+                <p class="cmp__text">我是沈砚，昭京的执笔大臣。我性格冷淡，不太爱说话。</p>
+              </div>
+              <div class="cmp__col cmp__col--ok">
+                <p class="cmp__tag">这样好</p>
+                <p class="cmp__text">
+                  他把茶盏搁在案角，声音很轻：「阿沅，你今夜若要走，我不拦。只是——别回头看我。」
+                </p>
+              </div>
+            </div>
+            <p class="tip__note">
+              好的开场白有三样东西：<strong>一个具体的地方</strong>、
+              <strong>一句露一半的台词</strong>、<strong>一个你能接的话头</strong>。
+            </p>
+          </div>
+
+          <textarea
+            class="textarea"
+            data-f="greeting"
+            rows="6"
+            placeholder={
+              '书房里只点了一盏灯。\n\n他没有抬头，笔尖在纸上顿了一下。\n\n「坐。」'
+            }
+          ></textarea>
+        </section>
+
+        <!-- 步骤 5 -->
+        <section class="step" data-step="5" hidden>
+          <h2 class="step__q">最后，写上你的名字</h2>
+          <p class="step__hint">别人看到角色的时候，也会看到这是谁写的。</p>
+          <input class="input" data-f="creator" type="text" placeholder="你的笔名或昵称" autocomplete="off" />
+
+          <h2 class="step__q step__q--sub">卡片打算放在哪儿？</h2>
+          <p class="step__hint">
+            填一个公开的下载地址就行 —— 网盘分享链接、你自己的仓库，都可以。
+            暂时没有也没关系，先空着，提交的时候会有人帮你处理。
+          </p>
+          <input
+            class="input"
+            data-f="sourceUrl"
+            type="url"
+            placeholder="https://…"
+            autocomplete="off"
+          />
+        </section>
+
+        <div class="nav">
+          <button class="btn btn--quiet" type="button" data-prev>上一步</button>
+          <button class="btn btn--primary" type="button" data-next>下一步</button>
+        </div>
+      </div>
+
+      <!-- ——— 右：实时预览 ——— -->
+      <aside class="side">
+        <p class="side__label">他在目录里会是这样</p>
+        <div class="pv">
+          <div class="pv__cover" data-pv-cover>
+            <span class="pv__grain" aria-hidden="true"></span>
+            <span class="pv__mono" data-pv-mono>·</span>
+          </div>
+          <div class="pv__body">
+            <p class="pv__name" data-pv-name>还没有名字</p>
+            <p class="pv__tagline" data-pv-tagline>一句话钩子会显示在这里</p>
+            <ul class="pv__tags" data-pv-tags></ul>
+          </div>
+        </div>
+        <p class="side__note">边写边看。填多少，它长多少。</p>
+      </aside>
+    </div>
+
+    <!-- ——— 完成 ——— -->
+    <section class="done" data-done hidden>
+      <h2 class="done__title">写好了</h2>
+      <p class="done__lead">
+        下面是两份文件：<strong>卡片</strong>是你自己用的，导入到玩的软件里就行；
+        <strong>条目</strong>是要放到这个目录上的。
+      </p>
+
+      <div class="done__grid">
+        <div class="out">
+          <div class="out__bar">
+            <h3 class="out__title">角色卡</h3>
+            <div class="out__acts">
+              <button class="btn btn--ghost" type="button" data-copy="card">复制</button>
+              <button class="btn btn--ghost" type="button" data-dl="card">下载</button>
+            </div>
+          </div>
+          <p class="out__note">直接导入到你常用的角色扮演软件里就能开始聊。</p>
+        </div>
+
+        <div class="out">
+          <div class="out__bar">
+            <h3 class="out__title">目录条目</h3>
+            <div class="out__acts">
+              <button class="btn btn--ghost" type="button" data-copy="entry">复制</button>
+              <button class="btn btn--ghost" type="button" data-dl="entry">下载</button>
+            </div>
+          </div>
+          <p class="out__note">放到目录上，别人才能找到他。</p>
+        </div>
+      </div>
+
+      <details class="raw">
+        <summary>想看看文件里写了什么</summary>
+        <pre class="raw__pre"><code data-raw></code></pre>
+      </details>
+
+      <div class="done__cta">
+        <a class="btn btn--primary" href={href('/submit/')}>把这个角色放到目录上</a>
+        <button class="btn btn--quiet" type="button" data-restart>再写一个</button>
+      </div>
+    </section>
+  </section>
+</Base>
+
+<script>
+  import { pickPalette, monogram, hashString } from '../lib/covers';
+
+  const root = document.querySelector<HTMLElement>('[data-wizard]');
+  if (root) {
+    const steps = Array.from(root.querySelectorAll<HTMLElement>('[data-step]'));
+    const dots = Array.from(root.querySelectorAll<HTMLElement>('[data-dot]'));
+    const stepNo = root.querySelector<HTMLElement>('[data-stepno]')!;
+    const prevBtn = root.querySelector<HTMLButtonElement>('[data-prev]')!;
+    const nextBtn = root.querySelector<HTMLButtonElement>('[data-next]')!;
+    const nav = root.querySelector<HTMLElement>('.nav')!;
+    const done = root.querySelector<HTMLElement>('[data-done]')!;
+    const rawCode = root.querySelector<HTMLElement>('[data-raw]')!;
+
+    const field = (key: string) => root.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[data-f="${key}"]`)!;
+    const val = (key: string) => field(key)?.value.trim() ?? '';
+    const setVal = (key: string, v: string) => {
+      const el = field(key);
+      if (el) el.value = v;
+    };
+
+    const selectedTags = new Set<string>();
+    let current = 1;
+    const TOTAL = steps.length;
+
+    // —— 标签选择 ——
+    for (const btn of Array.from(root.querySelectorAll<HTMLButtonElement>('[data-tag]'))) {
+      btn.addEventListener('click', () => {
+        const t = btn.dataset.tag!;
+        if (selectedTags.has(t)) {
+          selectedTags.delete(t);
+          btn.classList.remove('is-on');
+        } else {
+          selectedTags.add(t);
+          btn.classList.add('is-on');
+        }
+        renderPreview();
+      });
+    }
+
+    // —— 实时预览 ——
+    function renderPreview() {
+      const name = val('name') || '还没有名字';
+      const tagline = val('tagline') || '一句话钩子会显示在这里';
+      const id = val('name') || 'preview';
+      const p = pickPalette(id);
+
+      const cover = root!.querySelector<HTMLElement>('[data-pv-cover]')!;
+      cover.style.background = `linear-gradient(148deg, ${p.from}, ${p.to})`;
+      cover.style.color = p.ink;
+
+      root!.querySelector<HTMLElement>('[data-pv-mono]')!.textContent = val('name')
+        ? monogram(val('name'))
+        : '·';
+      root!.querySelector<HTMLElement>('[data-pv-name]')!.textContent = name;
+      root!.querySelector<HTMLElement>('[data-pv-tagline]')!.textContent = tagline;
+
+      const ul = root!.querySelector<HTMLElement>('[data-pv-tags]')!;
+      ul.innerHTML = '';
+      for (const t of selectedTags) {
+        const li = document.createElement('li');
+        li.className = 'pv__pill';
+        li.textContent = t;
+        ul.appendChild(li);
+      }
+    }
+
+    // —— 钩子字数提示 ——
+    const meter = root.querySelector<HTMLElement>('[data-tagline-meter]')!;
+    const taglineInput = field('tagline');
+    taglineInput?.addEventListener('input', () => {
+      const n = val('tagline').length;
+      if (!n) {
+        meter.textContent = '';
+        return;
+      }
+      if (n < 10) meter.textContent = '再具体一点，现在还有点空。';
+      else if (n > 40) meter.textContent = '有点长了，能砍到 30 字以内更抓人。';
+      else meter.textContent = '这个长度刚好。';
+    });
+
+    for (const el of Array.from(root.querySelectorAll('[data-f]'))) {
+      el.addEventListener('input', renderPreview);
+    }
+
+    // —— 步骤切换 ——
+    function show(n: number) {
+      current = Math.min(Math.max(n, 1), TOTAL);
+      for (const s of steps) s.hidden = Number(s.dataset.step) !== current;
+      for (const d of dots) d.classList.toggle('is-on', Number(d.dataset.dot) <= current);
+      stepNo.textContent = String(current);
+      prevBtn.style.visibility = current === 1 ? 'hidden' : 'visible';
+      nextBtn.textContent = current === TOTAL ? '写好了' : '下一步';
+      root!.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+
+    // —— 必填校验 ——
+    function check(n: number): string | null {
+      if (n === 1) {
+        if (!val('name')) return '先给他起个名字。';
+        if (selectedTags.size === 0) return '至少选一个标签，别人才能找到他。';
+      }
+      if (n === 2 && !val('tagline')) return '这一句不能空 —— 它决定了别人会不会点进来。';
+      if (n === 3 && !val('persona')) return '写两句他平时会做的事吧。';
+      if (n === 4 && !val('greeting')) return '写一下你们第一次见面的场景。';
+      if (n === 5 && !val('creator')) return '写上你的名字。';
+      return null;
+    }
+
+    nextBtn.addEventListener('click', () => {
+      const problem = check(current);
+      if (problem) {
+        alert(problem);
+        return;
+      }
+      if (current === TOTAL) {
+        finish();
+        return;
+      }
+      show(current + 1);
+    });
+
+    prevBtn.addEventListener('click', () => show(current - 1));
+
+    // —— 生成 ——
+    let cardJson = '';
+    let entryMd = '';
+    let slug = '';
+
+    const q = (s: string) => `"${String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+    const today = () => new Date().toISOString().slice(0, 10);
+
+    function slugify(name: string) {
+      const ascii = name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      if (ascii) return ascii;
+      // 中文名没有拼音库，退化成哈希，保证稳定且合法
+      return `character-${hashString(name).toString(36)}`;
+    }
+
+    function build() {
+      const name = val('name');
+      const tagline = val('tagline');
+      const creator = val('creator');
+      const sourceUrl = val('sourceUrl');
+      const greeting = val('greeting');
+      const persona = val('persona');
+      const limits = val('limits');
+      const tags = [...selectedTags];
+
+      slug = slugify(name);
+
+      const descriptionParts = [persona];
+      if (limits) descriptionParts.push(`【他做不到的】\n${limits}`);
+      const description = descriptionParts.filter(Boolean).join('\n\n');
+
+      // 1) 角色卡 —— Character Card V2
+      const card = {
+        spec: 'chara_card_v2',
+        spec_version: '2.0',
+        data: {
+          name,
+          description,
+          personality: persona.split('\n')[0] ?? '',
+          scenario: greeting.split(/\n{2,}/)[0] ?? '',
+          first_mes: greeting,
+          mes_example: '',
+          creator_notes: tagline,
+          system_prompt: '',
+          post_history_instructions: '',
+          alternate_greetings: [],
+          tags,
+          creator,
+          character_version: '1.0.0',
+          extensions: {},
+        },
+      };
+      cardJson = JSON.stringify(card, null, 2);
+
+      // 2) 目录条目
+      const lines: string[] = ['---'];
+      lines.push(`name: ${q(name)}`);
+      lines.push(`tagline: ${q(tagline)}`);
+      lines.push(`creator: ${q(creator)}`);
+      lines.push(`license: "CC-BY-NC-SA-4.0"`);
+
+      if (tags.length) {
+        lines.push('tags:');
+        for (const t of tags) lines.push(`  - ${q(t)}`);
+      }
+
+      lines.push(`version: "1.0.0"`);
+      lines.push(`updated: ${today()}`);
+
+      if (sourceUrl) {
+        lines.push('source:');
+        lines.push(`  - type: url`);
+        lines.push(`    url: ${q(sourceUrl)}`);
+        lines.push(`    label: ${q('角色卡下载')}`);
+      } else {
+        lines.push('source:');
+        lines.push(`  - type: url`);
+        lines.push(`    url: "https://在这里填你的下载地址"`);
+        lines.push(`    label: ${q('角色卡下载')}`);
+      }
+
+      lines.push(`spec: "character-card-v2"`);
+      lines.push(`greetingPreview: ${q(greeting.replace(/\s+/g, ' ').slice(0, 60))}`);
+      lines.push('---', '');
+
+      lines.push('## 关于他', '', persona || '（写两三句他是谁、故事从哪开始）', '');
+      if (limits) lines.push('## 他做不到的', '', limits, '');
+      lines.push('## 使用建议', '', '- （推荐搭配什么、怎么开场更好）');
+
+      entryMd = lines.join('\n');
+    }
+
+    function finish() {
+      build();
+      rawCode.textContent = entryMd;
+      for (const s of steps) s.hidden = true;
+      nav.hidden = true;
+      root!.querySelector('.bar')!.setAttribute('hidden', 'true');
+      done.hidden = false;
+      done.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+
+    // —— 复制 / 下载 ——
+    const pick = (kind: string) => (kind === 'card' ? cardJson : entryMd);
+    const fileName = (kind: string) => (kind === 'card' ? `${slug}.json` : `${slug}.md`);
+
+    for (const btn of Array.from(root.querySelectorAll<HTMLButtonElement>('[data-copy]'))) {
+      btn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(pick(btn.dataset.copy!));
+          const old = btn.textContent;
+          btn.textContent = '已复制';
+          setTimeout(() => (btn.textContent = old), 1500);
+        } catch {
+          alert('复制失败，打开下面的文件内容手动选中吧。');
+        }
+      });
+    }
+
+    for (const btn of Array.from(root.querySelectorAll<HTMLButtonElement>('[data-dl]'))) {
+      btn.addEventListener('click', () => {
+        const kind = btn.dataset.dl!;
+        const blob = new Blob([pick(kind)], {
+          type: kind === 'card' ? 'application/json' : 'text/markdown',
+          // eslint-disable-next-line
+        } as BlobPropertyBag);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName(kind);
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    }
+
+    root.querySelector<HTMLButtonElement>('[data-restart]')?.addEventListener('click', () => {
+      location.reload();
+    });
+
+    renderPreview();
+    show(1);
+  }
+</script>
+
+<style>
+  .head {
+    padding-top: 44px;
+    padding-bottom: 30px;
+  }
+
+  .head__title {
+    font-size: clamp(25px, 4.4vw, 38px);
+    line-height: 1.32;
+  }
+
+  .head__sub {
+    margin-top: 14px;
+    font-size: 15.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 42ch;
+  }
+
+  /* —— 布局 —— */
+  .wizard__grid {
+    display: grid;
+    gap: 30px;
+    align-items: start;
+  }
+
+  @media (min-width: 940px) {
+    .wizard__grid {
+      grid-template-columns: minmax(0, 1fr) 268px;
+      gap: 48px;
+    }
+
+    .side {
+      position: sticky;
+      top: 88px;
+    }
+  }
+
+  /* —— 进度 —— */
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--hairline);
+    margin-bottom: 28px;
+  }
+
+  .bar__dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .bar__dot {
+    width: 22px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--hairline-strong);
+    transition: background-color 0.2s ease;
+  }
+
+  .bar__dot.is-on {
+    background: var(--accent);
+  }
+
+  .bar__step {
+    font-size: 12.5px;
+    color: var(--ink-faint);
+  }
+
+  /* —— 问题 —— */
+  .step__q {
+    font-size: clamp(19px, 2.6vw, 23px);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+
+  .step__q--sub {
+    margin-top: 40px;
+  }
+
+  .step__hint {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--ink-muted);
+    margin-bottom: 16px;
+    max-width: 46ch;
+  }
+
+  /* —— 标签 —— */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    padding: 8px 15px;
+    font-size: 14px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--hairline-strong);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background-color 0.16s ease, border-color 0.16s ease,
+      color 0.16s ease;
+  }
+
+  .tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .tag.is-on {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* —— 引导卡片 —— */
+  .tip {
+    padding: 17px 19px;
+    background: var(--surface-sunk);
+    border-radius: var(--r-md);
+    margin-bottom: 18px;
+  }
+
+  .tip__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+
+  .cmp {
+    display: grid;
+    gap: 9px;
+  }
+
+  @media (min-width: 620px) {
+    .cmp {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .cmp__col {
+    padding: 12px 14px;
+    border-radius: var(--r-sm);
+    background: var(--surface);
+  }
+
+  .cmp__col--ok {
+    border-left: 2px solid var(--accent);
+  }
+
+  .cmp__col--no {
+    border-left: 2px solid var(--hairline-strong);
+  }
+
+  .cmp__tag {
+    font-size: 11.5px;
+    margin-bottom: 7px;
+  }
+
+  .cmp__col--no .cmp__tag {
+    color: var(--ink-faint);
+  }
+
+  .cmp__col--ok .cmp__tag {
+    color: var(--accent);
+  }
+
+  .cmp__text {
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+
+  .tip__note {
+    margin-top: 12px;
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: var(--ink-muted);
+  }
+
+  .tip__note strong {
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+
+  .meter {
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    min-height: 1.4em;
+  }
+
+  /* —— 导航 —— */
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 34px;
+    padding-top: 22px;
+    border-top: 1px solid var(--hairline);
+  }
+
+  /* —— 预览 —— */
+  .side__label {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+
+  .pv {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+
+  .pv__cover {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    display: flex;
+    align-items: flex-end;
+    padding: 14px;
+    background: linear-gradient(148deg, #f5efe9, #e8ded6);
+    transition: background 0.3s ease;
+  }
+
+  .pv__grain {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    mix-blend-mode: soft-light;
+  }
+
+  .pv__mono {
+    position: relative;
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 600;
+    opacity: 0.75;
+  }
+
+  .pv__body {
+    padding: 15px 16px 17px;
+  }
+
+  .pv__name {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .pv__tagline {
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-muted);
+  }
+
+  .pv__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+  }
+
+  .pv__pill {
+    font-size: 11.5px;
+    padding: 3px 9px;
+    border-radius: var(--r-pill);
+    background: var(--surface-sunk);
+    color: var(--ink-soft);
+  }
+
+  .side__note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  /* —— 完成 —— */
+  .done {
+    padding-top: 8px;
+  }
+
+  .done__title {
+    font-size: clamp(22px, 3.4vw, 30px);
+  }
+
+  .done__lead {
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 48ch;
+  }
+
+  .done__lead strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .done__grid {
+    display: grid;
+    gap: 14px;
+    margin-top: 26px;
+  }
+
+  @media (min-width: 640px) {
+    .done__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .out {
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+  }
+
+  .out__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .out__title {
+    font-size: 15px;
+  }
+
+  .out__acts {
+    display: flex;
+    gap: 6px;
+  }
+
+  .out__acts .btn {
+    padding: 6px 13px;
+    font-size: 12.5px;
+  }
+
+  .out__note {
+    margin-top: 10px;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--ink-muted);
+  }
+
+  .raw {
+    margin-top: 22px;
+  }
+
+  .raw summary {
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    cursor: pointer;
+    padding: 8px 0;
+  }
+
+  .raw summary:hover {
+    color: var(--accent);
+  }
+
+  .raw__pre {
+    margin: 10px 0 0;
+    padding: 18px;
+    background: var(--surface-sunk);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+    overflow: auto;
+    max-height: 380px;
+  }
+
+  .raw__pre code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+    white-space: pre;
+  }
+
+  .done__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hairline);
+  }
+
+  @media (max-width: 939px) {
+    .side {
+      order: -1;
+      margin-bottom: 6px;
+    }
+
+    .pv {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px;
+    }
+
+    .pv__cover {
+      width: 76px;
+      flex-shrink: 0;
+      aspect-ratio: 4 / 5;
+      border-radius: var(--r-sm);
+      padding: 9px;
+    }
+
+    .pv__mono {
+      font-size: 16px;
+    }
+
+    .pv__body {
+      padding: 0;
+    }
+  }
+</style>

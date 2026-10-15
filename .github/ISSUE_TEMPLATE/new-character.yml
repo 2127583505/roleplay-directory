@@ -1,0 +1,98 @@
+name: 提交一个角色
+description: 把写好的角色放到目录上
+title: '[角色] '
+labels: ['待收录']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        填完直接点最下面的「Submit new issue」，剩下的交给我们。
+
+        不需要会写代码，也不用改任何文件。
+
+  - type: input
+    id: name
+    attributes:
+      label: 角色名
+      placeholder: 沈砚
+    validations:
+      required: true
+
+  - type: input
+    id: tagline
+    attributes:
+      label: 一句话钩子
+      description: 说清他是谁、你们之间有什么。这一句决定别人会不会点进来。
+      placeholder: 他权倾朝野，却只在你面前承认自己会怕
+    validations:
+      required: true
+
+  - type: input
+    id: creator
+    attributes:
+      label: 署名
+      description: 想让别人看到的名字，笔名或昵称都行
+      placeholder: 你的笔名
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tags
+    attributes:
+      label: 题材
+      description: 可以多选。决定了别人怎么搜到他。
+      multiple: true
+      options:
+        - 古风
+        - 现代
+        - 仙侠
+        - 娱乐圈
+        - 校园
+        - 民国
+        - 悬疑
+        - 奇幻
+        - 治愈
+        - 慢热
+        - 破镜重圆
+        - 百合
+    validations:
+      required: true
+
+  - type: input
+    id: source
+    attributes:
+      label: 角色卡下载地址
+      description: 一个公开能打开的链接（网盘、你自己的仓库都行）。还没有的话写「需要帮忙」。
+      placeholder: https://…
+    validations:
+      required: true
+
+  - type: textarea
+    id: intro
+    attributes:
+      label: 简介
+      description: 两三句讲清他是谁、故事从哪开始。别复制角色卡里的原文，用你自己的话写。
+      placeholder: |
+        昭京最年轻的执笔大臣，二十岁入阁。
+        他确实会算，算人心，算局势，唯独算不到你。
+    validations:
+      required: true
+
+  - type: input
+    id: cover
+    attributes:
+      label: 封面图地址
+      description: 可以留空，会自动生成一张。不要用真人照片。
+      placeholder: 留空也可以
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 最后确认一下
+      options:
+        - label: 这张卡是我自己写的，或者我拿到了原作者的许可
+          required: true
+        - label: 没有用真人照片或真人形象
+          required: true
+        - label: 我知道收录后作者署名会显示我填的名字
+          required: true

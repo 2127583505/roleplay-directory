@@ -1,105 +1,89 @@
 ---
 import Base from '../layouts/Base.astro';
-import { SITE } from '../consts';
+import { SITE, href } from '../consts';
 ---
 
-<Base title="关于" description="灯下是一个只做索引的角色卡目录：不托管内容、不提供算力、不做推荐算法。">
+<Base
+  title="这里是什么"
+  description="灯下是一个角色卡目录：各种类型的角色都在这里，挑一个带走就行。"
+>
   <article class="wrap wrap--narrow doc">
     <header class="doc__head">
-      <h1 class="doc__title">关于{SITE.name}</h1>
+      <h1 class="doc__title">这里是什么</h1>
       <p class="doc__lede">
-        一个只做索引的角色卡目录。它记录「有哪些角色、在哪里能找到、是谁做的」，
-        然后把你送到创作者那里去。
+        一个角色卡目录。上面这些角色，都是喜欢角色扮演的人自己写出来、自己放上来的。
       </p>
     </header>
 
     <section class="block">
-      <h2 class="block__title">三条原则</h2>
-      <div class="principles">
-        <div class="principle">
-          <h3 class="principle__t">不托管内容</h3>
-          <p class="principle__d">
-            本站只保存元数据，角色卡文件永远在创作者自己的地址上。
-            所以本站不拥有、不复制、也不分发任何角色卡。
+      <h2 class="block__title">怎么用</h2>
+      <ol class="steps">
+        <li>
+          <p class="steps__t">逛逛，挑一个</p>
+          <p class="steps__d">
+            在<a href={href('/')}>全部角色</a>里按标签筛，或者直接搜名字、搜性格。
+            看着顺眼就点进去。
           </p>
-        </div>
-        <div class="principle">
-          <h3 class="principle__t">不提供算力</h3>
-          <p class="principle__d">
-            这里没有在线对话。你需要在自己的软件里、用自己配置的模型来玩。
-            好处是聊天记录不会经过任何第三方。
+        </li>
+        <li>
+          <p class="steps__t">把他带回去</p>
+          <p class="steps__d">
+            角色页面底部有下载链接，点一下就能拿到文件。
           </p>
-        </div>
-        <div class="principle">
-          <h3 class="principle__t">不做推荐算法</h3>
-          <p class="principle__d">
-            排序只有三种：最近更新、按名字、按创作者。
-            没有猜你喜欢，没有流量分发，也没有付费推广位。
+        </li>
+        <li>
+          <p class="steps__t">在你自己的软件里打开</p>
+          <p class="steps__d">
+            你平时用什么玩角色扮演，就在那个软件里导入这个文件。
+            第一次可能要摸索两分钟，摸过一次就顺了。
           </p>
-        </div>
-      </div>
+        </li>
+      </ol>
     </section>
 
     <section class="block">
-      <h2 class="block__title">为什么不做在线对话</h2>
+      <h2 class="block__title">为什么要自己下载，不能在这里直接聊</h2>
       <p class="block__text">
-        很简单：那需要有人付算力钱。为了对所有人免费，本站选择不做这件事。
+        因为聊天记录只留在你自己的设备上。
       </p>
       <p class="block__text">
-        这不是妥协。角色扮演里最私人的部分就是聊天内容，
-        让它们留在你自己的设备上，比留在别人的服务器上要好。
+        这里不提供在线对话，也不保存你和角色的任何一句话。说了什么、聊到几点，
+        只有你自己知道。
       </p>
     </section>
 
     <section class="block">
-      <h2 class="block__title">内容边界</h2>
-      <p class="block__text">本站不托管内容，但仍会对收录的条目设定底线：</p>
+      <h2 class="block__title">这里不会有什么</h2>
       <ul class="list">
-        <li>不使用真人照片作为封面，不使用他人肖像</li>
-        <li>不收录涉及真实可识别个人的角色</li>
-        <li>不收录涉及未成年人的性化内容</li>
-        <li>不收录未注明来源的搬运和抄袭</li>
+        <li>用真人照片当封面的角色</li>
+        <li>拿真人当原型的角色（明星、网红、或者你认识的人）</li>
+        <li>涉及未成年人的成人内容</li>
+        <li>抄了别人的角色卡却不写来源的</li>
       </ul>
       <p class="block__text">
-        发现条目违反了以上任何一条，可以在对应页面点「报告问题」，
-        或直接在仓库开 Issue。核实后会移除该条目。
+        看到不符合的，在角色页面点「报告问题」就行，我们会去核实。
       </p>
     </section>
 
     <section class="block">
-      <h2 class="block__title">授权</h2>
-      <ul class="list list--plain">
-        <li>
-          <strong>站点代码</strong> —— MIT。想自己搭一个一样的目录站，直接 fork 就行。
-        </li>
-        <li>
-          <strong>角色卡内容</strong> —— 著作权归创作者本人，授权方式由创作者在条目里自行标注。
-        </li>
-        <li>
-          <strong>条目元数据</strong> —— 名字、标签、简介由创作者提供，本站仅作索引展示。
-        </li>
-      </ul>
-    </section>
-
-    <section class="block">
-      <h2 class="block__title">成本</h2>
+      <h2 class="block__title">角色卡归谁</h2>
       <p class="block__text">
-        这是一套纯静态站点，构建结果是普通的 HTML 文件，托管在免费的静态托管上。
-        没有服务器、没有数据库、没有运行时开销。
+        归写它的人。
       </p>
       <p class="block__text">
-        唯一的开销是维护者的时间，和每年几十块的域名费（如果你想要一个自定义域名）。
+        每个角色页面都标了作者和授权方式。想拿去改、拿去做二次创作，
+        先看一眼作者怎么说。大部分人都很欢迎，但请把名字署上。
       </p>
     </section>
 
     <section class="block">
-      <h2 class="block__title">参与</h2>
+      <h2 class="block__title">我也想写一个</h2>
       <p class="block__text">
-        想加角色卡、修错别字、改样式、加功能，都可以直接提 PR。
-        不熟悉 Git 也没关系，开个 Issue 会有人接手。
+        欢迎。有一份手把手的引导，从「他是个什么样的人」开始问起，
+        一步步帮你把角色写出来 —— 不需要会写代码。
       </p>
       <p class="block__text">
-        <a class="btn btn--ghost" href={SITE.repo} rel="noopener">查看源码仓库</a>
+        <a class="btn btn--primary" href={href('/start/')}>开始写一个角色</a>
       </p>
     </section>
   </article>
@@ -122,96 +106,82 @@ import { SITE } from '../consts';
 
   .doc__lede {
     margin-top: 16px;
-    font-size: 15.5px;
+    font-size: 16px;
     line-height: 1.85;
     color: var(--ink-soft);
-    max-width: 52ch;
+    max-width: 44ch;
   }
 
   .block {
-    margin-top: 38px;
+    margin-top: 40px;
     padding-top: 28px;
     border-top: 1px solid var(--hairline);
   }
 
   .block__title {
-    font-size: 17px;
+    font-size: 18px;
     margin-bottom: 16px;
   }
 
   .block__text {
-    font-size: 14.5px;
+    font-size: 15px;
     line-height: 1.9;
     color: var(--ink-soft);
-    max-width: 56ch;
+    max-width: 48ch;
   }
 
   .block__text + .block__text {
-    margin-top: 13px;
+    margin-top: 14px;
   }
 
-  .principles {
-    display: grid;
-    gap: 14px;
+  .block__text a {
+    color: var(--accent);
   }
 
-  @media (min-width: 620px) {
-    .principles {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .principle {
-    padding: 20px;
-    background: var(--surface);
-    border: 1px solid var(--hairline);
-    border-radius: var(--r-md);
-  }
-
-  .principle__t {
+  /* —— 三步 —— */
+  .steps {
+    margin: 0;
+    padding-left: 1.3em;
     font-size: 15px;
-    margin-bottom: 9px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 48ch;
   }
 
-  .principle__d {
-    font-size: 13.5px;
-    line-height: 1.8;
-    color: var(--ink-muted);
+  .steps li + li {
+    margin-top: 18px;
   }
 
+  .steps__t {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .steps__d {
+    margin-top: 5px;
+  }
+
+  /* —— 清单 —— */
   .list {
     margin: 0;
     padding-left: 0;
     list-style: none;
-    font-size: 14.5px;
-    line-height: 1.85;
+    font-size: 15px;
+    line-height: 1.9;
     color: var(--ink-soft);
-    max-width: 56ch;
+    max-width: 48ch;
   }
 
   .list li {
     position: relative;
     padding-left: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 9px;
   }
 
   .list li::before {
-    content: '—';
+    content: '·';
     position: absolute;
-    left: 0;
+    left: 6px;
     color: var(--ink-faint);
-  }
-
-  .list--plain li::before {
-    content: none;
-  }
-
-  .list--plain li {
-    padding-left: 0;
-  }
-
-  .list strong {
-    color: var(--ink);
-    font-weight: 600;
   }
 </style>

@@ -3,7 +3,7 @@ import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Cover from '../../components/Cover.astro';
 import CharacterCard from '../../components/CharacterCard.astro';
-import { SITE, SOURCE_LABELS, SPEC_LABELS, href } from '../../consts';
+import { SITE, SOURCE_LABELS, SPEC_LABELS, href, absUrl } from '../../consts';
 
 export async function getStaticPaths() {
   const entries = await getCollection('characters');
@@ -16,6 +16,11 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const c = entry.data;
 const { Content } = await render(entry);
+
+// 收录徽章：创作者可以把它贴在主页或社交账号上
+const badgeImg = absUrl(`/badge/${entry.id}.svg`);
+const badgeLink = absUrl(`/c/${entry.id}/`);
+const badgeMd = `[![灯下收录](${badgeImg})](${badgeLink})`;
 
 const fmt = (d?: Date) =>
   d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : null;
@@ -234,6 +239,26 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
           )
         }
 
+        <!-- 收录徽章 -->
+        <section class="block">
+          <h2 class="block__title">收录徽章</h2>
+          <p class="block__text">
+            如果你是创作者，把这枚徽章贴在你的主页或社交账号上，链接指回这一页。
+          </p>
+          <div class="badgebox">
+            <img
+              class="badgebox__img"
+              src={badgeImg}
+              alt={`灯下收录 · ${c.name}`}
+              loading="lazy"
+            />
+            <button class="btn btn--ghost badgebox__btn" type="button" data-badge-copy>
+              复制嵌入代码
+            </button>
+          </div>
+          <pre class="badgebox__pre"><code data-badge-md>{badgeMd}</code></pre>
+        </section>
+
         <footer class="report">
           <p>内容有问题？比如链接失效、署名错误、或侵犯了你的权益。</p>
           <a class="btn btn--ghost" href={issueUrl} rel="noopener">报告问题</a>
@@ -242,6 +267,30 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
     </div>
   </article>
 </Base>
+
+<script>
+  const copyBtn = document.querySelector<HTMLButtonElement>('[data-badge-copy]');
+  const badgeMd = document.querySelector<HTMLElement>('[data-badge-md]');
+
+  copyBtn?.addEventListener('click', async () => {
+    const text = badgeMd?.textContent ?? '';
+    try {
+      await navigator.clipboard.writeText(text);
+      const old = copyBtn.textContent;
+      copyBtn.textContent = '已复制';
+      setTimeout(() => (copyBtn.textContent = old), 1500);
+    } catch {
+      // 剪贴板被拒时降级成选中
+      const range = document.createRange();
+      if (badgeMd) {
+        range.selectNodeContents(badgeMd);
+        const sel = getSelection();
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+      }
+    }
+  });
+</script>
 
 <style>
   .detail {
@@ -518,5 +567,42 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
 
   .report .btn {
     margin-top: 14px;
+  }
+
+  /* —— 收录徽章 —— */
+  .badgebox {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .badgebox__img {
+    height: 22px;
+    width: auto;
+  }
+
+  .badgebox__btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .badgebox__pre {
+    margin: 14px 0 0;
+    padding: 14px 16px;
+    background: var(--surface-sunk);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+    overflow-x: auto;
+  }
+
+  .badgebox__pre code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    white-space: pre-wrap;
+    word-break: break-all;
   }
 </style>

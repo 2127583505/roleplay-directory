@@ -1,0 +1,292 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, href } from '../consts';
+---
+
+<Base
+  title="写给创作者"
+  description="把你的角色放在这里。你的作品不会被拿去训练模型，你的名字会一直在最前面。"
+>
+  <article class="wrap wrap--narrow doc">
+    <header class="doc__head">
+      <p class="doc__eyebrow">写给写角色卡的人</p>
+      <h1 class="doc__title">把你的角色放在这里</h1>
+      <p class="doc__lede">
+        你已经花了时间把一个人写活。接下来要做的，
+        只是让他被更多人找到 —— 并且确保他一直被当成你的作品。
+      </p>
+    </header>
+
+    <!-- ——— 1 ——— -->
+    <section class="block">
+      <h2 class="block__title"><span class="block__num">01</span>你的作品不会被拿去训练模型</h2>
+      <p class="block__text">
+        这一点我们不靠承诺，靠<strong>做不到</strong>。
+      </p>
+      <p class="block__text">
+        这个站是纯静态页面：没有后端、没有数据库、没有登录系统、没有任何第三方脚本。
+        我们连你的访问记录都收不到，更不可能拿你的角色去训练任何东西。
+      </p>
+      <p class="block__text">
+        你的角色卡放在你自己的仓库里。我们不复制、不存储、不分析。
+        源代码全部开源，任何人都能查。
+      </p>
+    </section>
+
+    <!-- ——— 2 ——— -->
+    <section class="block">
+      <h2 class="block__title"><span class="block__num">02</span>被收录是一种认可，不是一次提交</h2>
+      <p class="block__text">
+        每一条提交都有人看一眼。我们宁缺毋滥。
+      </p>
+      <p class="block__text">
+        这听起来像是多了一道门槛，但它的实际作用是：
+        <strong>你永远不会出现在一堆垃圾旁边。</strong>
+        对一个认真写字的人来说，这比"曝光量"重要。
+      </p>
+      <p class="block__text">
+        被收录的角色会得到一个<strong>收录徽章</strong>，可以贴在你的主页、
+        你的社交媒体、任何地方。链接指回你的角色页面。
+      </p>
+    </section>
+
+    <!-- ——— 3 ——— -->
+    <section class="block">
+      <h2 class="block__title"><span class="block__num">03</span>你的名字在最前面</h2>
+      <p class="block__text">
+        每个角色页面都标作者，点进去是你的<strong>作品集</strong> ——
+        一个可以单独发出去的链接，列着你写过的所有角色和题材。
+      </p>
+      <p class="block__text">
+        改编你的人会标注来源。你的版本更新，关注你的人能查到更新记录。
+      </p>
+    </section>
+
+    <!-- ——— 4 ——— -->
+    <section class="block">
+      <h2 class="block__title"><span class="block__num">04</span>你的作品你说了算</h2>
+      <ul class="terms">
+        <li>
+          <p class="terms__k">授权方式你选</p>
+          <p class="terms__v">
+            「署名就行」「署名、不商用、改了要用同样的授权」「禁止转载」——
+            你定，我们按你写的标。
+          </p>
+        </li>
+        <li>
+          <p class="terms__k">随时可撤</p>
+          <p class="terms__v">
+            想删随时删，不需要理由。我们不会问你要什么。
+          </p>
+        </li>
+        <li>
+          <p class="terms__k">我们不做的事</p>
+          <p class="terms__v">
+            不卖你的作品、不改你的授权、不拿去做"合作"、不绕着你接触你的读者。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ——— 5 ——— -->
+    <section class="block">
+      <h2 class="block__title"><span class="block__num">05</span>这里只有创作者，没有算法</h2>
+      <p class="block__text">
+        没有猜你喜欢、没有流量分发、没有付费推广位。
+        排序只有三种：最近更新、按名字、按作者。
+      </p>
+      <p class="block__text">
+        作品被看到，靠的是它本身。
+      </p>
+    </section>
+
+    <!-- ——— 6 ——— -->
+    <section class="block">
+      <h2 class="block__title"><span class="block__num">06</span>提交比你想的简单</h2>
+      <p class="block__text">
+        如果还没写好，用<strong>引导</strong>从「他是什么样的人」开始回答几个问题就行。
+        如果已经有卡了，拖进去会自动读出名字、标签、开场白。
+      </p>
+      <p class="block__text">
+        提交之后会自动生成条目并开 PR，有人看一眼就上线。
+        你不用懂 Git，也不用管代码。
+      </p>
+    </section>
+
+    <!-- ——— 承诺清单 ——— -->
+    <section class="block">
+      <h2 class="block__title">我们承诺的，全部可查</h2>
+      <div class="pledge">
+        <ul class="check">
+          <li>不拿任何内容训练模型</li>
+          <li>永远免费，不商业化，不加广告</li>
+          <li>源代码全部开源</li>
+          <li>没有任何第三方追踪脚本</li>
+          <li>角色卡存在你自己的地方，我们不复制</li>
+          <li>你想撤，随时撤</li>
+        </ul>
+        <p class="pledge__note">
+          以上每一条都能验证：仓库公开，页面是静态的，没有网络请求会跑到你不知道的地方。
+        </p>
+      </div>
+    </section>
+
+    <footer class="doc__foot">
+      <div class="cta">
+        <a class="btn btn--primary" href={href('/start/')}>写一个角色</a>
+        <a class="btn btn--ghost" href={href('/import/')}>导入已有的卡</a>
+        <a class="btn btn--quiet" href={href('/submit/')}>查看提交方式</a>
+      </div>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .doc {
+    padding-top: 44px;
+  }
+
+  .doc__head {
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .doc__eyebrow {
+    font-size: 12.5px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .doc__title {
+    font-size: clamp(27px, 4.6vw, 40px);
+    line-height: 1.3;
+  }
+
+  .doc__lede {
+    margin-top: 16px;
+    font-size: 16px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 44ch;
+  }
+
+  /* —— 区块 —— */
+  .block {
+    margin-top: 46px;
+  }
+
+  .block__title {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  .block__num {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .block__text {
+    font-size: 15.5px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    max-width: 48ch;
+  }
+
+  .block__text + .block__text {
+    margin-top: 14px;
+  }
+
+  .block__text strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* —— 权利条款 —— */
+  .terms {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--hairline);
+    max-width: 52ch;
+  }
+
+  .terms li {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .terms__k {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .terms__v {
+    font-size: 14.5px;
+    line-height: 1.8;
+    color: var(--ink-muted);
+  }
+
+  /* —— 承诺清单 —— */
+  .pledge {
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--r-md);
+  }
+
+  .check {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    display: grid;
+    gap: 8px;
+  }
+
+  .check li {
+    position: relative;
+    padding-left: 26px;
+  }
+
+  .check li::before {
+    content: '✓';
+    position: absolute;
+    left: 2px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .pledge__note {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--hairline);
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--ink-muted);
+  }
+
+  /* —— 页脚 —— */
+  .doc__foot {
+    margin-top: 52px;
+    padding-top: 28px;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+</style>

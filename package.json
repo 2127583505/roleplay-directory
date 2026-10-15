@@ -9,7 +9,8 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "set-owner": "node scripts/set-owner.mjs"
+    "set-owner": "node scripts/set-owner.mjs",
+    "set-domain": "node scripts/set-domain.mjs"
   },
   "dependencies": {
     "astro": "^5.0.0"

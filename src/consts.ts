@@ -33,6 +33,10 @@ export const stripBase = (pathname: string): string => {
   return pathname.slice(BASE.length) || '/';
 };
 
+/** 生成带域名的完整地址，用于徽章、分享、复制链接等场景 */
+export const absUrl = (path: string): string =>
+  `${SITE.url.replace(/\/+$/, '')}${href(path)}`;
+
 export const SITE = {
   /** 站名。改这里即可全站生效 */
   name: '灯下',
@@ -48,7 +52,7 @@ export const SITE = {
 export const NAV = [
   { path: '/', label: '全部角色' },
   { path: '/start/', label: '写一个角色' },
-  { path: '/guide/', label: '创作指南' },
+  { path: '/creators/', label: '写给创作者' },
   { path: '/submit/', label: '放到目录上' },
 ] as const;
 

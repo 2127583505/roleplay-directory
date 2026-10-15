@@ -10,7 +10,8 @@ import { PINNED_TAGS, href } from '../consts';
   <section class="wrap head">
     <h1 class="head__title">写一个你自己的角色</h1>
     <p class="head__sub">
-      不用会写小说，也不用会写代码。就回答几个问题，我帮你把它整理成能用的角色卡。
+      不用会写小说，也不用会写代码。回答几个问题，我帮你整理成一段现成的话 ——
+      写完直接复制，粘进豆包或 DeepSeek，他就是你的了。
     </p>
   </section>
 
@@ -163,10 +164,11 @@ import { PINNED_TAGS, href } from '../consts';
           <p class="step__hint">别人看到角色的时候，也会看到这是谁写的。</p>
           <input class="input" data-f="creator" type="text" placeholder="你的笔名或昵称" autocomplete="off" />
 
-          <h2 class="step__q step__q--sub">卡片打算放在哪儿？</h2>
+          <h2 class="step__q step__q--sub">要不要顺手把它放到目录上？</h2>
           <p class="step__hint">
-            填一个公开的下载地址就行 —— 网盘分享链接、你自己的仓库，都可以。
-            暂时没有也没关系，先空着，提交的时候会有人帮你处理。
+            这一步可以跳过 —— 你写完就已经能在豆包或 DeepSeek 里聊了。
+            想放上来的话，填一个公开地址（网盘分享链接、你自己的仓库都行）。
+            先空着也没关系，目录会自动给他生成一份卡片文件。
           </p>
           <input
             class="input"
@@ -205,20 +207,38 @@ import { PINNED_TAGS, href } from '../consts';
     <section class="done" data-done hidden>
       <h2 class="done__title">写好了</h2>
       <p class="done__lead">
-        下面是两份文件：<strong>卡片</strong>是你自己用的，导入到玩的软件里就行；
-        <strong>条目</strong>是要放到这个目录上的。
+        下面三样东西，都来自你刚写的同一份人设：
+        <strong>提示词</strong>粘进豆包或 DeepSeek 就能马上聊；
+        <strong>角色卡文件</strong>给客户端用；
+        <strong>目录条目</strong>放到这个目录上，别人才找得到他。
       </p>
 
       <div class="done__grid">
+        <div class="out out--main">
+          <div class="out__bar">
+            <h3 class="out__title">
+              提示词 <span class="out__badge">现在就能用</span>
+            </h3>
+            <div class="out__acts">
+              <button class="btn btn--primary" type="button" data-copy="prompt">复制</button>
+            </div>
+          </div>
+          <p class="out__note">
+            打开豆包或 DeepSeek，新建一个对话，粘贴发送。他会立刻以这个身份开口。
+          </p>
+        </div>
+
         <div class="out">
           <div class="out__bar">
-            <h3 class="out__title">角色卡</h3>
+            <h3 class="out__title">角色卡文件</h3>
             <div class="out__acts">
               <button class="btn btn--ghost" type="button" data-copy="card">复制</button>
               <button class="btn btn--ghost" type="button" data-dl="card">下载</button>
             </div>
           </div>
-          <p class="out__note">直接导入到你常用的角色扮演软件里就能开始聊。</p>
+          <p class="out__note">
+            给 SillyTavern 这类客户端用。只在豆包或 DeepSeek 里聊的话，可以不管它。
+          </p>
         </div>
 
         <div class="out">
@@ -234,7 +254,7 @@ import { PINNED_TAGS, href } from '../consts';
       </div>
 
       <details class="raw">
-        <summary>想看看文件里写了什么</summary>
+        <summary>想先看看那段提示词写了什么</summary>
         <pre class="raw__pre"><code data-raw></code></pre>
       </details>
 
@@ -248,6 +268,7 @@ import { PINNED_TAGS, href } from '../consts';
 
 <script>
   import { pickPalette, monogram, hashString } from '../lib/covers';
+  import { buildPrompt } from '../lib/prompt';
 
   const root = document.querySelector<HTMLElement>('[data-wizard]');
   if (root) {
@@ -371,6 +392,7 @@ import { PINNED_TAGS, href } from '../consts';
     prevBtn.addEventListener('click', () => show(current - 1));
 
     // —— 生成 ——
+    let promptText = '';
     let cardJson = '';
     let entryMd = '';
     let slug = '';
@@ -427,6 +449,15 @@ import { PINNED_TAGS, href } from '../consts';
       };
       cardJson = JSON.stringify(card, null, 2);
 
+      // 1.5) 提示词 —— 复制粘贴进豆包 / DeepSeek 就能聊。
+      //      这是创作中心的第一输出：同一份人设，换成对话 App 能直接吃的样子。
+      promptText = buildPrompt(name, {
+        who: description,
+        behavior: persona.split('\n')[0] ?? '',
+        scenario: greeting.split(/\n{2,}/)[0] ?? '',
+        greeting,
+      });
+
       // 2) 目录条目
       const lines: string[] = ['---'];
       lines.push(`name: ${q(name)}`);
@@ -467,7 +498,7 @@ import { PINNED_TAGS, href } from '../consts';
 
     function finish() {
       build();
-      rawCode.textContent = entryMd;
+      rawCode.textContent = promptText;
       for (const s of steps) s.hidden = true;
       nav.hidden = true;
       root!.querySelector('.bar')!.setAttribute('hidden', 'true');
@@ -476,7 +507,8 @@ import { PINNED_TAGS, href } from '../consts';
     }
 
     // —— 复制 / 下载 ——
-    const pick = (kind: string) => (kind === 'card' ? cardJson : entryMd);
+    const pick = (kind: string) =>
+      kind === 'card' ? cardJson : kind === 'prompt' ? promptText : entryMd;
     const fileName = (kind: string) => (kind === 'card' ? `${slug}.json` : `${slug}.md`);
 
     for (const btn of Array.from(root.querySelectorAll<HTMLButtonElement>('[data-copy]'))) {
@@ -487,7 +519,7 @@ import { PINNED_TAGS, href } from '../consts';
           btn.textContent = '已复制';
           setTimeout(() => (btn.textContent = old), 1500);
         } catch {
-          alert('复制失败，打开下面的文件内容手动选中吧。');
+          alert('复制失败，展开下面的内容手动选中复制吧。');
         }
       });
     }
@@ -835,9 +867,9 @@ import { PINNED_TAGS, href } from '../consts';
     margin-top: 26px;
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 700px) {
     .done__grid {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.3fr 1fr 1fr;
     }
   }
 
@@ -846,6 +878,23 @@ import { PINNED_TAGS, href } from '../consts';
     background: var(--surface);
     border: 1px solid var(--hairline);
     border-radius: var(--r-md);
+  }
+
+  /* 主输出：提示词 */
+  .out--main {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--hairline));
+  }
+
+  .out__badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 2px 9px;
+    border-radius: var(--r-pill);
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    font-size: 11px;
+    font-weight: 500;
+    vertical-align: middle;
   }
 
   .out__bar {

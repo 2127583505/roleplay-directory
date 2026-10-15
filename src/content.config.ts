@@ -11,7 +11,28 @@ import { glob } from 'astro/loaders';
  * 字段命名尽量与 Character Card V2/V3 规范对齐，方便从现有生态导入。
  */
 
-/** 角色卡本体所在位置。至少一条。 */
+/**
+ * 人设 —— 角色的全部内容。
+ *
+ * 这是创作中心的核心：一个数据源，三种输出 ——
+ *   1. 提示词（粘进豆包 / DeepSeek 直接用）
+ *   2. 角色卡文件（下载导入 SillyTavern 等客户端）
+ *   3. 站点页面（展示给访问者）
+ *
+ * 有了它，角色就完整存在于站内，不依赖任何外部文件。
+ */
+const personaSchema = z.object({
+  /** 他是谁 —— 完整人设：身份、性格、行为倾向、内在矛盾、禁区 */
+  who: z.string(),
+  /** 他说话的方式 —— 语气、用词习惯 */
+  behavior: z.string().optional(),
+  /** 现在的情况 —— 故事从哪开始 */
+  scenario: z.string().optional(),
+  /** 开场白（完整版） */
+  greeting: z.string().optional(),
+});
+
+/** 角色卡本体所在位置。站内代管的角色可以不填（卡片会自动生成）。 */
 const sourceSchema = z.object({
   /** 载体类型：PNG 卡 / JSON / Git 仓库 / IPFS / 其他链接 */
   type: z.enum(['png', 'json', 'repo', 'ipfs', 'url']),
@@ -59,8 +80,11 @@ const characters = defineCollection({
     /** 指定抽象封面配色 id，留空则由 id 哈希决定 */
     coverStyle: z.string().optional(),
 
-    // —— 核心：本体在哪 ——
-    source: z.array(sourceSchema).min(1),
+    // —— 人设：角色的全部内容（创作中心的核心） ——
+    persona: personaSchema.optional(),
+
+    // —— 本体在哪：站内代管的角色可以不填（卡片会自动生成） ——
+    source: z.array(sourceSchema).default([]),
 
     /** 使用的卡片规范，用于兼容性提示 */
     spec: z

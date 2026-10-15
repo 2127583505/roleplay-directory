@@ -1,27 +1,17 @@
 /**
- * 把 Character Card V2 转成可以直接粘贴进
- * 豆包 / DeepSeek / Kimi / 元包 等对话 App 的提示词。
+ * 提示词生成：把角色的人设转成可以直接粘贴进
+ * 豆包 / DeepSeek / Kimi / 元包 等对话 App 的文字。
  *
- * 这是整个站最关键的转换：
- *   角色卡格式（给 SillyTavern 用） ≠ 提示词（给普通对话 App 用）
- *
- * 大多数人不用 SillyTavern，她们用的是豆包和 DeepSeek。
- * 对她们来说，需要的不是一张 PNG 卡，而是一段能直接粘贴的文字。
+ * 这是创作中心的第一个输出。大多数人不用 SillyTavern，
+ * 她们用的是豆包和 DeepSeek —— 对她们来说，
+ * 需要的不是一张 PNG 卡，而是一段能直接粘贴的人设。
  */
 
-export interface CardV2Data {
-  name: string;
-  description?: string;
-  personality?: string;
+export interface Persona {
+  who: string;
+  behavior?: string;
   scenario?: string;
-  first_mes?: string;
-  mes_example?: string;
-  creator_notes?: string;
-}
-
-export interface CardV2 {
-  spec?: string;
-  data: CardV2Data;
+  greeting?: string;
 }
 
 /** 规则部分：让对话保持角色的关键约束 */
@@ -33,37 +23,34 @@ const RULES = [
   '不确定怎么接的时候，宁可含糊，也不要用不像他的语气解释。',
 ];
 
-export function buildRoleplayPrompt(card: CardV2): string {
-  const d = card.data ?? (card as CardV2Data);
+export function buildPrompt(name: string, persona: Persona): string {
   const parts: string[] = [];
 
-  parts.push(`从现在开始，你是「${d.name}」，按下面的人设和我对话。`);
+  parts.push(`从现在开始，你是「${name}」，按下面的人设和我对话。`);
   parts.push('');
 
-  if (d.description) {
+  if (persona.who) {
     parts.push('【他是谁】');
-    parts.push(d.description.trim());
+    parts.push(persona.who.trim());
     parts.push('');
   }
 
-  if (d.personality) {
+  if (persona.behavior) {
     parts.push('【他说话的方式】');
-    parts.push(d.personality.trim());
+    parts.push(persona.behavior.trim());
     parts.push('');
   }
 
-  if (d.scenario) {
+  if (persona.scenario) {
     parts.push('【现在的情况】');
-    parts.push(d.scenario.trim());
+    parts.push(persona.scenario.trim());
     parts.push('');
   }
 
-  if (d.first_mes) {
+  if (persona.greeting) {
     parts.push('【开场】');
-    parts.push(
-      '对话从这一幕开始。下面是他说的第一句话，你从这里接：',
-    );
-    parts.push(d.first_mes.trim());
+    parts.push('对话从这一幕开始。下面是他说的第一句话，你从这里接：');
+    parts.push(persona.greeting.trim());
     parts.push('');
   }
 
@@ -73,4 +60,61 @@ export function buildRoleplayPrompt(card: CardV2): string {
   parts.push('现在，以他的身份，对我说第一句话。');
 
   return parts.join('\n');
+}
+
+/** 兼容 Character Card V2 格式的入口 */
+export interface CardV2Data {
+  name: string;
+  description?: string;
+  personality?: string;
+  scenario?: string;
+  first_mes?: string;
+}
+
+export interface CardV2 {
+  data: CardV2Data;
+}
+
+export function buildRoleplayPrompt(card: CardV2): string {
+  const d = card.data ?? (card as CardV2Data);
+  return buildPrompt(d.name, {
+    who: d.description ?? '',
+    behavior: d.personality,
+    scenario: d.scenario,
+    greeting: d.first_mes,
+  });
+}
+
+/** 由人设生成可下载的 Character Card V2 文件内容 */
+export function buildCardJson(opts: {
+  name: string;
+  persona: Persona;
+  creator: string;
+  version: string;
+  tags: string[];
+}): string {
+  const { name, persona, creator, version, tags } = opts;
+
+  const card = {
+    spec: 'chara_card_v2',
+    spec_version: '2.0',
+    data: {
+      name,
+      description: persona.who,
+      personality: persona.behavior ?? '',
+      scenario: persona.scenario ?? '',
+      first_mes: persona.greeting ?? '',
+      mes_example: '',
+      creator_notes: '',
+      system_prompt: '',
+      post_history_instructions: '',
+      alternate_greetings: [],
+      tags,
+      creator,
+      character_version: version,
+      extensions: {},
+    },
+  };
+
+  return JSON.stringify(card, null, 2);
 }

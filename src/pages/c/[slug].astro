@@ -1,12 +1,10 @@
 ---
 import { getCollection, render } from 'astro:content';
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
 import Base from '../../layouts/Base.astro';
 import Cover from '../../components/Cover.astro';
 import CharacterCard from '../../components/CharacterCard.astro';
 import { SITE, SOURCE_LABELS, SPEC_LABELS, href, absUrl } from '../../consts';
-import { buildRoleplayPrompt } from '../../lib/prompt';
+import { buildPrompt } from '../../lib/prompt';
 
 export async function getStaticPaths() {
   const entries = await getCollection('characters');
@@ -26,23 +24,14 @@ const badgeLink = absUrl(`/c/${entry.id}/`);
 const badgeMd = `[![灯下收录](${badgeImg})](${badgeLink})`;
 
 /**
- * 如果这个角色在本站有卡片文件（seed-cards/），就生成一段
- * 可以直接粘贴进豆包 / DeepSeek 的提示词。
- *
- * 这是大多数用户真正需要的东西：她们不用 SillyTavern，
- * 用的是普通对话 App —— 对她们来说 PNG 卡文件没用，
- * 有用的是一段能直接粘贴的人设文字。
+ * 提示词：直接从条目里的 persona 生成。
+ * 这是把角色带进豆包 / DeepSeek 的那一步 —— 对大多数用户来说，
+ * 这比下载卡片文件有用得多。
  */
-let cardPrompt: string | null = null;
-try {
-  const raw = await readFile(
-    path.join(process.cwd(), 'seed-cards', `${entry.id}.json`),
-    'utf-8',
-  );
-  cardPrompt = buildRoleplayPrompt(JSON.parse(raw));
-} catch {
-  // 这个角色的卡片不在本站（外链模式），不提供提示词
-}
+const cardPrompt = c.persona ? buildPrompt(c.name, c.persona) : null;
+
+/** 站内生成的角色卡下载地址（有 persona 才有） */
+const genCardUrl = c.persona ? absUrl(`/cards/${entry.id}.json`) : null;
 
 const fmt = (d?: Date) =>
   d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : null;
@@ -85,8 +74,8 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
           loading="eager"
         />
 
-        <a class="btn btn--primary detail__cta" href="#get">
-          获取这张角色卡
+        <a class="btn btn--primary detail__cta" href={cardPrompt ? '#chat' : '#get'}>
+          {cardPrompt ? '复制提示词，去聊天' : '获取这张角色卡'}
         </a>
 
         <dl class="facts">
@@ -148,7 +137,40 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
             <section class="opening">
               <p class="opening__label">开场白</p>
               <blockquote class="opening__quote">{c.greetingPreview}</blockquote>
-              <p class="opening__note">节选。完整开场白在角色卡文件里。</p>
+              <p class="opening__note">
+                节选。完整的开场白就写在下面那段话里 —— 复制过去，他会从这一幕开始。
+              </p>
+            </section>
+          )
+        }
+
+        {
+          cardPrompt && (
+            <section class="block" id="chat">
+              <h2 class="block__title">在豆包 / DeepSeek 里和他聊天</h2>
+              <p class="block__text">
+                不用装软件，不用下载文件。点下面这个按钮复制他的话，
+                打开豆包或 DeepSeek 新建一个对话，粘贴，发送 ——
+                他就会以这个身份，对你说第一句。
+              </p>
+
+              <div class="promptbox">
+                <button class="btn btn--primary" type="button" data-prompt-copy>
+                  复制提示词
+                </button>
+                <a class="btn btn--ghost" href={href('/use/')}>详细的图文步骤</a>
+              </div>
+
+              <ol class="minsteps">
+                <li>点「复制提示词」，按钮会变成「已复制，去粘贴吧」</li>
+                <li>打开豆包或 DeepSeek，新建一个对话</li>
+                <li>粘贴进输入框，发送。剩下的交给他</li>
+              </ol>
+
+              <details class="promptdetails">
+                <summary>先看看这段话里写了什么</summary>
+                <pre class="promptdetails__pre"><code data-prompt-text>{cardPrompt}</code></pre>
+              </details>
             </section>
           )
         }
@@ -188,76 +210,43 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
           )
         }
 
-        {
-          cardPrompt && (
-            <section class="block" id="chat">
-              <h2 class="block__title">在豆包 / DeepSeek 里和他聊天</h2>
-              <p class="block__text">
-                不用装任何软件，也不用下载文件。复制下面这段话，粘到豆包或
-                DeepSeek 的新对话里发出去，他就会以这个身份开始和你说话。
-              </p>
-              <div class="promptbox">
-                <button class="btn btn--primary" type="button" data-prompt-copy>
-                  复制提示词
-                </button>
-                <a class="btn btn--ghost" href={href('/use/')}>具体怎么操作</a>
-              </div>
-              <details class="promptdetails">
-                <summary>看看这段话里写了什么</summary>
-                <pre class="promptdetails__pre"><code data-prompt-text>{cardPrompt}</code></pre>
-              </details>
-            </section>
-          )
-        }
-
-        <!-- 获取与导入 -->
+        <!-- 卡片文件：进阶用法，给客户端用户 -->
         <section class="block get" id="get">
-          <h2 class="block__title">怎么开始</h2>
+          <h2 class="block__title">还想把它存成一份文件？</h2>
+          <p class="block__text">
+            只在豆包或 DeepSeek 里聊的话，上面那一步做完就结束了，这里可以跳过。<br />
+            下面这份文件是给「角色扮演客户端」用的 —— 比如 SillyTavern，
+            那类软件能导入卡片、记住更长的对话。没有装的话不用管。
+          </p>
 
-          <ol class="steps">
-            <li class="steps__item">
-              <span class="steps__num">1</span>
-              <div>
-                <p class="steps__title">下载角色卡</p>
-                <ul class="sources">
-                  {
-                    c.source.map((s) => (
-                      <li class="sources__item">
-                        <a class="sources__link" href={s.url} rel="noopener nofollow">
-                          <span class="sources__label">{s.label ?? SOURCE_LABELS[s.type] ?? '下载'}</span>
-                          <span class="sources__type">{SOURCE_LABELS[s.type] ?? s.type}</span>
-                        </a>
-                        {s.checksum && <code class="sources__sum">{s.checksum}</code>}
-                      </li>
-                    ))
-                  }
-                </ul>
-                <p class="steps__note">文件由创作者自己保管，点进去就能下。</p>
-              </div>
-            </li>
+          <ul class="sources">
+            {
+              genCardUrl && (
+                <li class="sources__item">
+                  <a class="sources__link" href={genCardUrl}>
+                    <span class="sources__label">角色卡文件（由上面同一份人设生成）</span>
+                    <span class="sources__type">站内生成</span>
+                  </a>
+                </li>
+              )
+            }
+            {
+              c.source.map((s) => (
+                <li class="sources__item">
+                  <a class="sources__link" href={s.url} rel="noopener nofollow">
+                    <span class="sources__label">{s.label ?? SOURCE_LABELS[s.type] ?? '下载'}</span>
+                    <span class="sources__type">{SOURCE_LABELS[s.type] ?? s.type}</span>
+                  </a>
+                  {s.checksum && <code class="sources__sum">{s.checksum}</code>}
+                </li>
+              ))
+            }
+          </ul>
 
-            <li class="steps__item">
-              <span class="steps__num">2</span>
-              <div>
-                <p class="steps__title">在你的软件里导入</p>
-                <p class="steps__text">
-                  打开你常用的角色扮演客户端，找到「角色 / Characters」→「导入 /
-                  Import」，选择刚下载的 PNG 或 JSON 文件即可。
-                </p>
-              </div>
-            </li>
-
-            <li class="steps__item">
-              <span class="steps__num">3</span>
-              <div>
-                <p class="steps__title">开始对话</p>
-                <p class="steps__text">
-                  选择这个角色开一段新对话。开场白会自动出现在第一条消息里。
-                </p>
-                <p class="steps__note">下面那些建议不用照做，按你喜欢的节奏来就行。</p>
-              </div>
-            </li>
-          </ol>
+          <p class="block__note">
+            下载后，在客户端里找「角色 / Characters」→「导入 / Import」，
+            选中这个文件就进去了。卡片和提示词出自同一份人设，内容一致 —— 一个来源，两种用法。
+          </p>
         </section>
 
         {
@@ -503,11 +492,23 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
     margin-bottom: 16px;
   }
 
+  .block__text {
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
   .block__note {
     margin-top: 12px;
     font-size: 12.5px;
     color: var(--ink-muted);
     line-height: 1.7;
+  }
+
+  /* 卡片下载区：正文与列表之间的呼吸 */
+  .get .sources {
+    margin-top: 20px;
   }
 
   .list {
@@ -673,6 +674,20 @@ const issueUrl = `${SITE.repo}/issues/new?title=${encodeURIComponent(
     color: var(--ink-soft);
     white-space: pre-wrap;
     word-break: break-all;
+  }
+
+  /* —— 三步小抄 —— */
+  .minsteps {
+    margin: 20px 0 0;
+    padding-left: 1.25em;
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--ink-muted);
+    max-width: 50ch;
+  }
+
+  .minsteps li + li {
+    margin-top: 6px;
   }
 
   /* —— 提示词复制 —— */

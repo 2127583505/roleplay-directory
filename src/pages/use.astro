@@ -5,138 +5,241 @@ import { href } from '../consts';
 
 <Base
   title="怎么让他和你聊天"
-  description="把角色带进豆包、DeepSeek、Kimi：不需要任何技术，复制粘贴就行。"
+  description="豆包、DeepSeek 都能用：从角色页面复制一段话，粘贴到新对话里发出去，他就会以那个身份开口。"
 >
   <article class="wrap wrap--narrow doc">
     <header class="doc__head">
       <h1 class="doc__title">怎么让他和你聊天</h1>
       <p class="doc__lede">
-        不用装软件，不用懂技术。你平时用什么 AI，就用什么 ——
-        把角色的那段话粘进去，他就会以那个身份开始说话。
+        不用装软件，不用注册，不用下载任何东西。<br />
+        你平时用豆包还是 DeepSeek，就用你自己那个 ——
+        <strong>复制一段话，粘进新对话，他就会以那个身份开口说话。</strong>
       </p>
     </header>
 
     <nav class="toc" aria-label="目录">
-      <a href="#doubao">豆包：创建智能体</a>
-      <a href="#deepseek">DeepSeek：直接粘贴</a>
-      <a href="#others">Kimi / 元宝 / 智谱清言</a>
+      <a href="#paste">第一步：把那句话复制下来</a>
+      <a href="#deepseek">在 DeepSeek 里开始</a>
+      <a href="#doubao">在豆包里开始</a>
       <a href="#grow">怎么让他越来越像</a>
       <a href="#faq">常见问题</a>
     </nav>
 
-    <!-- ——— 豆包 ——— -->
-    <section class="block" id="doubao">
+    <!-- ——— 第一步：复制 ——— -->
+    <section class="block" id="paste">
       <div class="wayhead">
-        <span class="wayhead__tag">推荐</span>
-        <h2 class="wayhead__title">豆包：创建智能体</h2>
+        <span class="wayhead__tag">只需要学这一件事</span>
+        <h2 class="wayhead__title">第一步：把那段话复制下来</h2>
       </div>
       <p class="block__text">
-        设定保存在智能体里，<strong>每次打开都不用重新粘贴</strong>，聊到哪了也在。
-        如果你常用豆包，这是最好的方式。
+        每个角色页面上都有一段现成的话。那段话就是他的全部设定 ——
+        他是谁、怎么说话、你们的故事从哪一幕开始、以及他必须一直保持这个身份。
+        你不用改一个字。
       </p>
+
       <ol class="steps">
         <li>
-          <p class="steps__t">打开豆包，找到「创建智能体」</p>
+          <p class="steps__t">打开任意一个角色页面</p>
           <p class="steps__d">
-            首页或「AI 智能体」标签里。不同版本入口位置略有差别，
-            找不到就搜「创建智能体」。
+            还没挑的话，<a href={href('/')}>先挑一个</a>。
           </p>
         </li>
         <li>
-          <p class="steps__t">名字填角色名</p>
-          <p class="steps__d">比如「沈砚」。</p>
+          <p class="steps__t">往下找到「在豆包 / DeepSeek 里和他聊天」</p>
+          <p class="steps__d">那一段有一段粗体标题，很好认。</p>
         </li>
         <li>
-          <p class="steps__t">把提示词粘进「设定」那一栏</p>
+          <p class="steps__t">点「复制提示词」</p>
           <p class="steps__d">
-            在角色页面点「复制提示词」，回来整段粘贴进设定框。
+            按钮变成「已复制，去粘贴吧」，就说明那段话已经在你的剪贴板里了。
           </p>
-        </li>
-        <li>
-          <p class="steps__t">保存，开聊</p>
-          <p class="steps__d">以后从「我的智能体」里随时找他。</p>
         </li>
       </ol>
-      <a class="btn btn--ghost" href={href('/')}>先去挑一个角色</a>
+
+      <div class="callout">
+        <p class="callout__t">想先看看里面写了什么</p>
+        <p>
+          点「看看这段话里写了什么」，会展开全文。里面分成
+          <strong>他是谁 / 他说话的方式 / 现在的情况 / 开场 / 规则</strong> 五段，都是人话，看得懂。
+        </p>
+        <p>
+          万一「复制」没反应（浏览器偶尔会拦剪贴板），就展开那段话，
+          用手指或鼠标把全文选中，再复制一次，一样能用。
+        </p>
+      </div>
     </section>
 
     <!-- ——— DeepSeek ——— -->
     <section class="block" id="deepseek">
       <div class="wayhead">
         <span class="wayhead__tag">最省事</span>
-        <h2 class="wayhead__title">DeepSeek：直接粘贴</h2>
+        <h2 class="wayhead__title">在 DeepSeek 里开始</h2>
       </div>
+
       <ol class="steps">
         <li>
-          <p class="steps__t">开一个新对话</p>
-          <p class="steps__d">App 或网页都行。</p>
+          <p class="steps__t">打开 DeepSeek，点「新对话」</p>
+          <p class="steps__d">App 或网页都可以，不用登录别的什么东西。</p>
         </li>
         <li>
-          <p class="steps__t">第一条消息粘贴提示词，发送</p>
+          <p class="steps__t">把那段话粘贴进输入框，直接发送</p>
           <p class="steps__d">
-            在角色页面点「复制提示词」，粘进去发出去。
-            他会以角色身份说第一句话。
+            长按输入框选「粘贴」，或者在电脑上按 Ctrl+V。
           </p>
         </li>
         <li>
-          <p class="steps__t">正常聊就行</p>
+          <p class="steps__t">他会以角色的身份回你第一句</p>
           <p class="steps__d">
-            想换话题、想推进剧情、想沉默都可以 —— 他会接。
+            接下来正常聊就行 —— 想换话题、想推进剧情、想晾着他，都可以，他会接。
           </p>
         </li>
       </ol>
+
+      <div class="verify">
+        <p class="verify__t">粘对了，会是这样</p>
+        <ul class="verify__list">
+          <li>他第一句就用「我」说话，不像客服也不像说明书</li>
+          <li>一次只说一两句，不会一口气写一大段</li>
+          <li>你问「你是谁」，他不会说自己是 DeepSeek</li>
+        </ul>
+        <p class="verify__note">三条都中，说明成功了，往下聊就行。</p>
+      </div>
+
       <div class="callout">
         <p class="callout__t">两个小技巧</p>
-        <p>开新对话要重新粘贴一次提示词。</p>
         <p>
-          聊天时把「深度思考」<strong>关掉</strong>，他会更像在聊天，
-          不那么像在写文章。
+          <strong>每开一个新对话，都要重新粘一次。</strong>
+          嫌麻烦的话，看下面豆包那一节。
+        </p>
+        <p>
+          把「深度思考 / 深度推理」<strong>关掉</strong>。开着的时候他会像在写文章，
+          关了才像在跟你聊天。
         </p>
       </div>
     </section>
 
-    <!-- ——— 其他 ——— -->
-    <section class="block" id="others">
-      <h2 class="block__title">Kimi / 元宝 / 智谱清言</h2>
+    <!-- ——— 豆包 ——— -->
+    <section class="block" id="doubao">
+      <div class="wayhead">
+        <span class="wayhead__tag">想少粘几次就选这个</span>
+        <h2 class="wayhead__title">在豆包里开始</h2>
+      </div>
+
       <p class="block__text">
-        这几个都有智能体功能，操作和豆包差不多：
-        找到「创建智能体 / 创建角色」，把提示词粘进设定里就行。
+        豆包有两种玩法，按你想要哪种选：
+      </p>
+
+      <div class="ways">
+        <div class="ways__item">
+          <p class="ways__rank">只想先聊起来</p>
+          <p class="ways__t">和 DeepSeek 一模一样</p>
+          <p class="ways__d">
+            开新对话 → 粘贴那段话 → 发送。就这样，现在就能聊。
+          </p>
+        </div>
+        <div class="ways__item">
+          <p class="ways__rank">想让他住在豆包里</p>
+          <p class="ways__t">存成一个角色，以后不用再粘</p>
+          <p class="ways__d">
+            需要把那段话填进豆包的「创建」入口里。具体怎么找，见下面。
+          </p>
+        </div>
+      </div>
+
+      <h3 class="subhead">关于「创建」入口，我直说</h3>
+      <p class="block__text">
+        豆包每个版本的入口位置和叫法都不一样 ——
+        有的版本在「我的」里，有的叫「智能体」，有的叫「AI 角色」或「伙伴」，
+        也有版本根本没有单独的创建入口。
       </p>
       <p class="block__text">
-        如果不想建智能体，也可以用 DeepSeek 那个办法 —— 新对话里直接粘贴。
+        <strong>所以我不给你一条可能已经过时的路径。</strong>
+        你按这个顺序找一下，找得到就存下来，找不到就用上面的粘贴法，效果完全一样，
+        只是每次开新对话要再粘一次。
+      </p>
+
+      <ol class="steps">
+        <li>
+          <p class="steps__t">打开豆包，看首页或底栏里「+」「新建」旁边有没有「创建」类选项</p>
+        </li>
+        <li>
+          <p class="steps__t">在上面那个搜索框里，直接搜「智能体」或「创建智能体」</p>
+          <p class="steps__d">多数版本会把入口搜出来。</p>
+        </li>
+        <li>
+          <p class="steps__t">再看「我的」页面里有没有「我的智能体 / 我的角色」</p>
+        </li>
+      </ol>
+
+      <p class="block__text">找到之后，填法只有一个要点：</p>
+      <ol class="steps">
+        <li>
+          <p class="steps__t">名字填角色的名字</p>
+          <p class="steps__d">比如「沈砚」。头像随便。</p>
+        </li>
+        <li>
+          <p class="steps__t">把那段话整段粘进人设 / 设定 / 角色描述那一栏</p>
+          <p class="steps__d">
+            这一栏在不同版本叫「设定」「人设」「角色描述」「提示词」，都是同一个东西。
+            粘进去之后不用删任何一句。
+          </p>
+        </li>
+        <li>
+          <p class="steps__t">保存，然后开始聊</p>
+          <p class="steps__d">以后从「我的」里点开就能找他，不用再粘。</p>
+        </li>
+      </ol>
+
+      <div class="callout">
+        <p class="callout__t">找不到入口，不要硬找</p>
+        <p>
+          别为了一个入口折腾半小时。新对话里粘贴一遍，得到的是同一个角色、同一个效果。
+          入口只是帮你省掉那一次粘贴而已。
+        </p>
+      </div>
+    </section>
+
+    <!-- ——— 其他模型 ——— -->
+    <section class="block" id="others">
+      <h2 class="block__title">Kimi / 元宝 / 智谱清言 / 通义</h2>
+      <p class="block__text">
+        全都能用，而且全都不用记特殊步骤：<strong>开新对话 → 粘贴 → 发送。</strong>
+        这些 App 里有的也有创建入口，找得到就存，找不到就算了，不影响。
       </p>
     </section>
 
-    <!-- ——— 丰富设定 ——— -->
+    <!-- ——— 养成 ——— -->
     <section class="block" id="grow">
       <h2 class="block__title">怎么让他越来越像你心里那个他</h2>
       <p class="block__text">
-        角色不是定稿，是养出来的。三种方式，按可靠程度排：
+        角色不是定稿，是养出来的。你聊着聊着，会冒出一些原本没写进设定里的东西 ——
+        他的过去、你们之间发生过的事、他某个小动作。
+        这时候有三条路，按可靠程度排：
       </p>
 
       <div class="grow">
         <div class="grow__card">
           <p class="grow__rank">最可靠</p>
-          <p class="grow__t">改人设，重新粘贴</p>
+          <p class="grow__t">写回人设，再粘贴一次</p>
           <p class="grow__d">
-            聊出了新东西 —— 他的过去、你们的关系、某个小习惯 ——
-            直接把它写进那段提示词里。下次粘贴的就是升级版。
+            把新冒出来的东西，加进那段话里，重新复制、重新粘贴。
+            这样它就成了他的一部分，以后换新对话也不会丢。
           </p>
         </div>
         <div class="grow__card">
           <p class="grow__rank">最快</p>
-          <p class="grow__t">聊天里直接补</p>
+          <p class="grow__t">当场补一句</p>
           <p class="grow__d">
-            说「（补充设定：你左手有一道旧疤，你从不解释它）」，
-            或者「记住，我是三年前你送走的那个学生」。现在的模型基本都能接住并延续。
+            在聊天框里直接写「（补充设定：你左手有一道旧疤，你从不解释它）」，
+            或者「记住，我是三年前你送走的那个学生」。现在的模型基本都接得住。
           </p>
         </div>
         <div class="grow__card">
           <p class="grow__rank">最省心</p>
-          <p class="grow__t">用 App 的记忆</p>
+          <p class="grow__t">交给 App 的记忆</p>
           <p class="grow__d">
-            豆包和 Kimi 都有记忆功能，会自动记住重要的事。
-            缺点是你控制不了它记什么、忘什么。
+            豆包和 Kimi 都有记忆功能，会自动记住一些重要的事。
+            缺点是记什么、忘什么，你说了不算。
           </p>
         </div>
       </div>
@@ -144,15 +247,15 @@ import { href } from '../consts';
       <div class="callout">
         <p class="callout__t">一条最重要的经验</p>
         <p>
-          <strong>写进人设的</strong>：不变的东西 —— 他的性格、过去、说话方式、
-          做不到的事。
+          <strong>写进人设的</strong>：不会变的东西 —— 他的性格、他的过去、
+          他说话的方式、他做不到的事。
         </p>
         <p>
-          <strong>留在对话里的</strong>：会变的东西 —— 你们的关系到哪了、
-          你说过什么、你们一起经历过什么。
+          <strong>留在对话里的</strong>：会变的东西 —— 你们的关系走到哪了、
+          你说过什么、你们一起经历了什么。
         </p>
         <p>
-          把会变的也塞进人设，改起来会越来越麻烦。
+          把会变的东西也塞进人设，以后每改一次都要重新粘一次，会越来越麻烦。
         </p>
       </div>
     </section>
@@ -162,9 +265,26 @@ import { href } from '../consts';
       <h2 class="block__title">常见问题</h2>
 
       <details class="qa">
+        <summary>豆包和 DeepSeek，我该用哪个</summary>
+        <p class="qa__a">
+          哪个顺手用哪个，效果没有区别。差别只在习惯上：
+          DeepSeek 每开一个新对话要重新粘一次；
+          豆包如果能存成角色，以后就不用粘了。
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary>点了「复制提示词」没反应</summary>
+        <p class="qa__a">
+          有些浏览器会拦剪贴板。点开下面「看看这段话里写了什么」，
+          把展开的全文选中，手动复制一次就行，内容一模一样。
+        </p>
+      </details>
+
+      <details class="qa">
         <summary>聊着聊着他忘了自己是谁</summary>
         <p class="qa__a">
-          长对话会把设定冲淡。两个办法：把提示词整段再发一次；
+          聊得太长，设定会被冲淡。两个办法：把那段话整段再发一次；
           或者只说一句「（回到你的角色）」，通常就能拉回来。
         </p>
       </details>
@@ -173,32 +293,31 @@ import { href } from '../consts';
         <summary>他开始长篇大论，一次写一大段</summary>
         <p class="qa__a">
           直接说「一次只说一两句」。在 DeepSeek 里也可以把「深度思考」关掉，
-          会自然很多。
+          语气会自然很多。
         </p>
       </details>
 
       <details class="qa">
         <summary>他出戏了，说自己是 AI</summary>
         <p class="qa__a">
-          提示词的规则里已经写了不许出戏，但偶尔还是会破。
-          把【规则】那一段再发一遍，一般就回来了。
-        </p>
-      </details>
-
-      <details class="qa">
-        <summary>想从头再来一次</summary>
-        <p class="qa__a">
-          开一个新对话，重新粘贴提示词。如果你用的是智能体，
-          直接开新会话就行，不用重新粘。
+          那段话的【规则】里已经写了不许出戏，但偶尔还是会破。
+          把最后【规则】那几句再发一遍，一般就回来了。
         </p>
       </details>
 
       <details class="qa">
         <summary>他说的话不像他</summary>
         <p class="qa__a">
-          多半是「他做不到的事」这一段没被遵守。直接指出来：
-          「你不会这样说话」。模型纠错很快。
-          屡次不行的话，说明这段设定要写得更具体。
+          多半是「他做不到的事」没被遵守。直接指出来：「你不会这样说话」，
+          模型纠错很快。反复不行，就说明这段设定要写得更具体一点。
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary>想从头再来一次</summary>
+        <p class="qa__a">
+          开一个新对话，重新粘贴那段话。如果你在豆包里存成了角色，
+          直接开新会话就行，不用重新粘。
         </p>
       </details>
     </section>
@@ -231,6 +350,11 @@ import { href } from '../consts';
     line-height: 1.85;
     color: var(--ink-soft);
     max-width: 46ch;
+  }
+
+  .doc__lede strong {
+    color: var(--ink);
+    font-weight: 600;
   }
 
   /* —— 目录 —— */
@@ -275,6 +399,17 @@ import { href } from '../consts';
     font-weight: 600;
   }
 
+  .block__text a {
+    color: var(--accent);
+  }
+
+  .subhead {
+    margin: 30px 0 13px;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
   /* —— 方式标题 —— */
   .wayhead {
     display: flex;
@@ -308,7 +443,7 @@ import { href } from '../consts';
   }
 
   .steps li + li {
-    margin-top: 16px;
+    margin-top: 14px;
   }
 
   .steps__t {
@@ -320,6 +455,41 @@ import { href } from '../consts';
     margin-top: 4px;
     font-size: 14px;
     color: var(--ink-muted);
+  }
+
+  .steps__d a {
+    color: var(--accent);
+  }
+
+  /* —— 验证清单 —— */
+  .verify {
+    margin-top: 22px;
+    padding: 20px 22px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+    max-width: 52ch;
+  }
+
+  .verify__t {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  .verify__list {
+    margin: 0;
+    padding-left: 1.15em;
+    font-size: 14.5px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+  }
+
+  .verify__note {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--ink-faint);
   }
 
   /* —— 提示块 —— */
@@ -348,6 +518,47 @@ import { href } from '../consts';
   .callout strong {
     color: var(--ink);
     font-weight: 600;
+  }
+
+  /* —— 两种玩法 —— */
+  .ways {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  @media (min-width: 620px) {
+    .ways {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .ways__item {
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+  }
+
+  .ways__rank {
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 9px;
+  }
+
+  .ways__t {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .ways__d {
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: var(--ink-muted);
   }
 
   /* —— 三种养法 —— */
@@ -401,14 +612,13 @@ import { href } from '../consts';
   }
 
   .qa summary {
-    padding: 16px 0;
+    padding: 16px 28px 16px 0;
     font-size: 15px;
     font-weight: 500;
     color: var(--ink);
     cursor: pointer;
     list-style: none;
     position: relative;
-    padding-right: 28px;
   }
 
   .qa summary::-webkit-details-marker {

@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import CharacterCard from '../components/CharacterCard.astro';
-import { PINNED_TAGS } from '../consts';
+import { PINNED_TAGS, href } from '../consts';
 
 const entries = await getCollection('characters');
 
@@ -82,6 +82,11 @@ const featured = sorted.filter((e) => e.data.featured).slice(0, 3);
           ))
         }
       </div>
+
+      <p class="hero__how">
+        <a href={href('/use/')}>挑好之后怎么用 →</a>
+        <span>复制一段话，粘进豆包或 DeepSeek 就能开始聊，不用装任何东西</span>
+      </p>
     </div>
   </section>
 
@@ -275,6 +280,25 @@ const featured = sorted.filter((e) => e.data.featured).slice(0, 3);
     line-height: 1.8;
     color: var(--ink-soft);
     max-width: 46ch;
+  }
+
+  /* 挑完之后怎么用 —— 新访客最容易卡住的一步 */
+  .hero__how {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    margin-top: 24px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--ink-muted);
+    max-width: 52ch;
+  }
+
+  .hero__how a {
+    color: var(--accent);
+    font-weight: 500;
+    white-space: nowrap;
   }
 
   .search {

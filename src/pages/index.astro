@@ -29,6 +29,12 @@ const others = [...freq.keys()]
 const filterTags = [...pinned, ...others].slice(0, 14);
 
 const total = entries.length;
+
+/**
+ * 编辑精选：单独给一块位置。
+ * 最多取 3 个 —— 精选一多就不叫精选了，也会让首页变长。
+ */
+const featured = sorted.filter((e) => e.data.featured).slice(0, 3);
 ---
 
 <Base>
@@ -78,6 +84,32 @@ const total = entries.length;
       </div>
     </div>
   </section>
+
+  {
+    featured.length > 0 && (
+      <section class="wrap featured">
+        <div class="featured__head">
+          <h2 class="featured__title">值得先看的</h2>
+          <p class="featured__note">这几个写得比较认真，不知道从哪开始的话可以先看它们。</p>
+        </div>
+        <div class="featured__grid">
+          {featured.map((entry, i) => (
+            <CharacterCard
+              id={entry.id}
+              name={entry.data.name}
+              tagline={entry.data.tagline}
+              creator={entry.data.creator}
+              tags={entry.data.tags}
+              cover={entry.data.cover}
+              coverAlt={entry.data.coverAlt}
+              coverStyle={entry.data.coverStyle}
+              index={i}
+            />
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   <section class="wrap listing" data-directory>
     <div class="listing__bar">
@@ -138,7 +170,9 @@ const total = entries.length;
   const emptyEl = document.querySelector<HTMLElement>('[data-empty]');
   const resetBtn = document.querySelector<HTMLButtonElement>('[data-reset]');
   const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-chip]'));
-  const cards = Array.from(document.querySelectorAll<HTMLElement>('.card'));
+  // 只在目录网格内部取卡片。首页精选区用的是同一套卡片组件，
+  // 如果从 document 全局取，排序会把精选卡片也搬进网格，出现重复。
+  const cards = grid ? Array.from(grid.querySelectorAll<HTMLElement>('.card')) : [];
 
   if (grid && cards.length) {
     let activeTag = '';
@@ -309,6 +343,40 @@ const total = entries.length;
     background: var(--ink);
     border-color: var(--ink);
     color: var(--bg);
+  }
+
+  /* —— 精选 —— */
+  .featured {
+    padding-top: 34px;
+  }
+
+  .featured__head {
+    margin-bottom: 20px;
+  }
+
+  .featured__title {
+    font-size: 17px;
+  }
+
+  .featured__note {
+    margin-top: 8px;
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--ink-muted);
+  }
+
+  .featured__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 18px;
+  }
+
+  /* 固定三列：数量少、卡片大，视觉上才“被单独挑出来” */
+  @media (min-width: 680px) {
+    .featured__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
   }
 
   /* —— 列表 —— */
